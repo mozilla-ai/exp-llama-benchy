@@ -1,0 +1,41 @@
+host: studio.local  date: 2026-09-12T22:46Z
+exp-benchy commit: 050146d
+os: Darwin 25.5.0
+machine: Chip: Apple M4 Max;Memory: 64 GB;
+llama-server: version: 0.1.0-dev (build 10441, commit 0177dcc73)
+llama-server int-dot: 0
+llamafile: /Users/mala/Downloads/llamafile-0.10.3: llamafile v0.10.3 (sha256 e6d4041a82ca37ce)
+llamafile: /Users/mala/Downloads/llamafile-0.10.4-thin: llamafile v0.10.4 (sha256 98e2c934155ca635)
+llamafile: /Users/mala/Downloads/llamafile-0.10.5: llamafile v0.10.5 (sha256 417bcc3348cd5162)
+llamafile: /Users/mala/ggufs/llamafile-0.10.3-thin: llamafile v0.10.3 (sha256 a7d13ccf90c3a711)
+llamafile: /Users/mala/llamafile-42ff11b/llamafile-0.10.6-42ff11b: llamafile v0.10.6 (sha256 779b9d7d3233c223)
+llamafile: /Users/mala/llamafiles/llamafile-0.10.2-thin: llamafile v0.10.2 (sha256 53c638390ba9b49b)
+llamafile: /Users/mala/llamafiles/llamafile-0.10.6-c73be59: llamafile v0.10.6 (sha256 648cd658ea642218)
+llamafile module: /Users/mala/.llamafile/v/0.10.1/ggml-metal.dylib (sha256 9aa9287be72d2564, 659912 B, cuda-graphs=0, int-dot=0)
+llamafile module: /Users/mala/.llamafile/v/0.10.2/ggml-metal.dylib (sha256 26a3ea119b5f1033, 759080 B, cuda-graphs=0, int-dot=0)
+llamafile module: /Users/mala/.llamafile/v/0.10.3/ggml-metal.dylib (sha256 9e1da5d03289b2e3, 759080 B, cuda-graphs=0, int-dot=0)
+llamafile module: /Users/mala/.llamafile/v/0.10.4/ggml-metal.dylib (sha256 d83d325dc1011266, 760040 B, cuda-graphs=0, int-dot=0)
+llamafile module: /Users/mala/.llamafile/v/0.10.5/ggml-metal.dylib (sha256 2cb06d756738ce7d, 763576 B, cuda-graphs=0, int-dot=0)
+llamafile module: /Users/mala/.llamafile/v/0.10.6/ggml-metal.dylib (sha256 3d2e72c67b867a0a, 780920 B, cuda-graphs=0, int-dot=0)
+llamafile module: /Users/mala/gpulibs/0.10.2/ggml-cuda-cublas.so (sha256 ed1ea816b717be16, 97890976 B, cuda-graphs=0, int-dot=0)
+llamafile module: /Users/mala/gpulibs/0.10.2/ggml-cuda.so (sha256 2bd6fa94edd72b46, 98185912 B, cuda-graphs=0, int-dot=0)
+llamafile module: /Users/mala/gpulibs/0.10.2/ggml-rocm.so (sha256 526d8159abc4d4ec, 423958808 B, cuda-graphs=0, int-dot=0)
+llamafile module: /Users/mala/gpulibs/0.10.2/ggml-vulkan.so (sha256 3ce6948c3c30b82b, 35043888 B, cuda-graphs=0, int-dot=0)
+llamafile module: /Users/mala/gpulibs/0.10.4/ggml-cuda.so (sha256 157715547b7231d6, 98534096 B, cuda-graphs=0, int-dot=0)
+llamafile module: /Users/mala/gpulibs/0.10.4/ggml-rocm.so (sha256 9989d24c16088de2, 47114184 B, cuda-graphs=0, int-dot=0)
+llamafile module: /Users/mala/gpulibs/0.10.4/ggml-vulkan.so (sha256 2b9a455beca44c07, 65476272 B, cuda-graphs=0, int-dot=0)
+llamafile module: /Users/mala/gpulibs/0.10.5_/ggml-cuda.so (sha256 93a5ec9e0e29a2d5, 109463040 B, cuda-graphs=0, int-dot=0)
+llamafile module: /Users/mala/gpulibs/0.10.5_/ggml-rocm.so (sha256 4b2d8960efb7fad2, 47832032 B, cuda-graphs=0, int-dot=0)
+llamafile module: /Users/mala/gpulibs/0.10.5_/ggml-vulkan.so (sha256 a5b2d1957123620c, 44403728 B, cuda-graphs=0, int-dot=0)
+llamafile module: /Users/mala/gpulibs/0.10.5/ggml-cuda-cublas.so (sha256 5d8498a03d2d9c9b, 109143528 B, cuda-graphs=0, int-dot=0)
+llamafile module: /Users/mala/gpulibs/0.10.5/ggml-cuda.so (sha256 40ff5c705d68d830, 109426176 B, cuda-graphs=0, int-dot=0)
+llamafile module: /Users/mala/gpulibs/0.10.5/ggml-rocm.so (sha256 4b2d8960efb7fad2, 47832032 B, cuda-graphs=0, int-dot=0)
+llamafile module: /Users/mala/gpulibs/0.10.5/ggml-vulkan.so (sha256 a5b2d1957123620c, 44403728 B, cuda-graphs=0, int-dot=0)
+llamafile module: /Users/mala/gpulibs/0.10.6/ggml-cuda-cublas.so (sha256 d5cda30bbbc28893, 109278728 B, cuda-graphs=0, int-dot=0)
+llamafile module: /Users/mala/gpulibs/0.10.6/ggml-cuda.so (sha256 4f8ffca38d825b61, 109585952 B, cuda-graphs=0, int-dot=0)
+llamafile module: /Users/mala/gpulibs/0.10.6/ggml-rocm.so (sha256 f97ffa60d94a34e7, 47956464 B, cuda-graphs=0, int-dot=0)
+llamafile module: /Users/mala/gpulibs/0.10.6/ggml-vulkan.so (sha256 e29660760e3ed1df, 45613560 B, cuda-graphs=0, int-dot=0)
+ollama: 0.34.0
+lm studio runtime: llama.cpp-mac-arm64-apple-metal-advsimd@2.28.2 mlx-llm-mac-arm64-apple-metal-advsimd@1.11.0 
+ollama -lms blobs: qwen3.5:0.8b-lms=091d8deba394 qwen3.5:9b-lms=cd76ec205963 qwen3.8:27b-lms=e00082f779fa qwen3.8:27b-lms-mtp=e00082f779fa qwen3.8:27b-lms-mtp4=e00082f779fa 
+ollama draft lengths: qwen3.8:27b-lms-mtp=2 qwen3.8:27b-lms-mtp4=4 

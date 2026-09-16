@@ -1,0 +1,16 @@
+# TAG qwen3.8:27b-lms-mtp4
+# As qwen3.8:27b-lms plus the library tag's own `draft_num_predict 4`
+# (--spec-type draft-mtp --spec-draft-n-max 4). Used only by the optional
+# qwen3.8-27b-mtp4 experiment, which keeps the 2026-09-10 draft-4 cells
+# reproducible and documents the platform dependence of the draft length.
+FROM @LMS@/Qwen3.8-27B-GGUF/Qwen3.8-27B-Q4_K_M.gguf
+TEMPLATE {{ .Prompt }}
+RENDERER qwen3.8
+PARSER qwen3.5
+PARAMETER top_p 0.95
+PARAMETER draft_num_predict 4
+PARAMETER min_p 0
+PARAMETER presence_penalty 0
+PARAMETER repeat_penalty 1
+PARAMETER temperature 1
+PARAMETER top_k 20

@@ -1,0 +1,23 @@
+host: steamdeck  date: 2026-09-13T02:46Z
+exp-benchy commit: 050146d
+os: Linux 6.16.12-valve24.5-1-neptune-616-gb2f7cfe85e45
+llama-server: version: 0.1.0-dev (build 1239, commit 0177dcc7)
+llama-server int-dot: 0
+llamafile: /home/deck/Downloads/llamafile-0.10.5: llamafile v0.10.5 (sha256 417bcc3348cd5162)
+llamafile: /home/deck/Downloads/llamafile-0.10.6-c73be59: llamafile v0.10.6 (sha256 648cd658ea642218)
+llamafile: /home/deck/llamafile-42ff11b/llamafile-0.10.6-42ff11b: llamafile v0.10.6 (sha256 779b9d7d3233c223)
+llamafile module: /home/deck/.llamafile/v/0.10.0/ggml-vulkan.so (sha256 daeb7d020d8ae22b, 34530528 B, cuda-graphs=0, int-dot=0)
+llamafile module: /home/deck/.llamafile/v/0.10.3/ggml-cuda.so (sha256 2bd6fa94edd72b46, 98185912 B, cuda-graphs=0, int-dot=0)
+llamafile module: /home/deck/.llamafile/v/0.10.3/ggml-vulkan.so (sha256 3ce6948c3c30b82b, 35043888 B, cuda-graphs=0, int-dot=0)
+llamafile module: /home/deck/.llamafile/v/0.10.5/ggml-cuda.so (sha256 40ff5c705d68d830, 109426176 B, cuda-graphs=0, int-dot=0)
+llamafile module: /home/deck/.llamafile/v/0.10.5/ggml-vulkan.so (sha256 a5b2d1957123620c, 44403728 B, cuda-graphs=0, int-dot=0)
+llamafile module: /home/deck/.llamafile/v/0.10.6/ggml-cuda.so (sha256 4f8ffca38d825b61, 109585952 B, cuda-graphs=0, int-dot=0)
+llamafile module: /home/deck/.llamafile/v/0.10.6/ggml-vulkan.so (sha256 e29660760e3ed1df, 45613560 B, cuda-graphs=0, int-dot=0)
+llamafile module: /home/deck/Desktop/ggml-vulkan.so (sha256 db0375273ed04e63, 36014104 B, cuda-graphs=0, int-dot=0)
+llamafile module: /home/deck/llamafile-42ff11b/ggml-vulkan.so (sha256 da7402e19c8bb54e, 56734160 B, cuda-graphs=0, int-dot=11)
+llamafile module: /home/deck/vkab/main/ggml-vulkan.so (sha256 e29660760e3ed1df, 45613560 B, cuda-graphs=0, int-dot=0)
+llamafile module: /home/deck/vkab/sdk/ggml-vulkan.so (sha256 da7402e19c8bb54e, 56734160 B, cuda-graphs=0, int-dot=11)
+ollama: 0.34.0
+lm studio runtime: llama.cpp-linux-x86_64-vulkan-avx2@2.28.2 
+ollama -lms blobs: qwen3.5:0.8b-lms= qwen3.5:9b-lms= qwen3.8:27b-lms= qwen3.8:27b-lms-mtp= qwen3.8:27b-lms-mtp4= 
+ollama draft lengths: qwen3.8:27b-lms-mtp= qwen3.8:27b-lms-mtp4= 

@@ -1,0 +1,16 @@
+# TAG qwen3.8:27b-lms-mtp
+# As qwen3.8:27b-lms plus `draft_num_predict 2`, which makes Ollama start its
+# llama-server with --spec-type draft-mtp --spec-draft-n-max 2. Draft length 2
+# is the campaign rule for every runtime (it is the only value LM Studio
+# supports); the Ollama library tag's own default is 4 -- see ...-mtp4.
+FROM @LMS@/Qwen3.8-27B-GGUF/Qwen3.8-27B-Q4_K_M.gguf
+TEMPLATE {{ .Prompt }}
+RENDERER qwen3.8
+PARSER qwen3.5
+PARAMETER top_p 0.95
+PARAMETER draft_num_predict 2
+PARAMETER min_p 0
+PARAMETER presence_penalty 0
+PARAMETER repeat_penalty 1
+PARAMETER temperature 1
+PARAMETER top_k 20

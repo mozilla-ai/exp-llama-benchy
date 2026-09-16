@@ -1,0 +1,381 @@
+# exp-benchy experiment definition — Linux pod (Xeon Gold 6338, 1x NVIDIA L40S 48 GB).
+#
+# A "run" is one cell of (server, model, pp, tg). Per the design, the server is
+# fully restarted between every run for cache isolation.
+#
+# Templating: start_cmd / stop_cmd / model_template are shell strings rendered
+# with the model's `refs[<server>]` map, plus the top-level `vars:` block
+# (as {vars.*}), plus the resolved {model} and {served_model_name}.
+# `refs[<server>].model` is rendered the same way, so an explicit override can
+# reference {vars.*} too.
+#
+# Resolution cascade (per (model, server) ref):
+#   served_model_name → defaults to model.name
+#   model             → defaults to rendering server.model_template
+# Either can be set explicitly in `refs[<server>]` to override.
+#
+# ---------------------------------------------------------------------------
+# Design decisions for this round (see the 2026-09 review):
+#
+#  * ONE weights file per model, for every runtime: the lmstudio-community
+#    GGUFs that LM Studio already has on disk. llama.cpp and llamafile load
+#    them directly; Ollama serves them through tags created from the very same
+#    files (ollama/create-lms-models.sh). Ollama names the imported blob by its
+#    sha256, so the provenance check is `shasum -a 256 <gguf>` == blob name.
+#    Previously llama.cpp/llamafile ran Unsloth quants (27B: UD-Q4_K_XL, 6.6%
+#    larger than the Q4_K_M the other two served).
+#
+#  * Speculative decoding is a SEPARATE series, not the baseline. LM Studio
+#    auto-enables MTP whenever the GGUF carries `nextn` tensors (only the 27B
+#    does) and drafts 2 tokens with no setting to change it; the Ollama library
+#    `qwen3.8:27b` sets `draft_num_predict 4`; llama.cpp/llamafile default to
+#    none. So:
+#      - qwen3.8-27b-all-servers : MTP off for everyone that can switch it off
+#        (LM Studio cannot -> excluded here, present in the MTP experiments)
+#      - qwen3.8-27b-mtp         : MTP on for everyone, DRAFT LENGTH 2 -- the
+#                                  only value all four runtimes can share
+#                                  (--spec-type draft-mtp --spec-draft-n-max 2
+#                                  --spec-draft-backend-sampling; Ollama tag
+#                                  qwen3.8:27b-lms-mtp with draft_num_predict 2)
+#      - qwen3.8-27b-mtp4        : optional; the three configurable runtimes at
+#                                  Ollama's library default of 4. Reproduces the
+#                                  2026-09-10 cells and shows the platform
+#                                  dependence: on Metal 4-token drafts LOSE to no
+#                                  MTP (M4 Max n_max 1/2/3/4 -> 26.2/22.8/17.4/~14
+#                                  vs 23.4 tok/s), on CUDA they win (L40S
+#                                  56/65/74/73 vs ~37). Never per-platform.
+#    0.8B / 9B: no runtime uses MTP (no community GGUF ships the head), so the
+#    plain experiments are already like-for-like.
+#
+#  * Ollama runs as a systemd service here (User=ollama, store under
+#    /usr/share/ollama/.ollama). Its context is pinned with a drop-in,
+#    /etc/systemd/system/ollama.service.d/benchy.conf
+#    (Environment=OLLAMA_CONTEXT_LENGTH=16384); start_cmd restarts the service
+#    so every cell starts cold, stop_cmd stops it to free the port. The last
+#    Ollama cell therefore leaves the service STOPPED: run
+#    `sudo systemctl start ollama` after the campaign. Passwordless sudo is
+#    required (it is configured on this box).
+#
+#  * Sampling is each tool's default (llama-benchy only sends max_tokens).
+#    LM Studio's defaults cannot be set from `lms`, so forcing greedy on the
+#    other three would make the MTP acceptance rates *less* comparable, not
+#    more. Report this as a caveat.
+# ---------------------------------------------------------------------------
+
+vars:
+  lms_models: /home/mala/.lmstudio/models/lmstudio-community
+
+# Shared shell for the two llama.cpp-style servers on :8080. Filter to LISTEN
+# sockets so we don't kill clients with open connections; graceful TERM with a
+# KILL fallback for slow shutdowns when large weights are still resident.
+x-stop-8080: &stop_8080 |
+  pids=$(lsof -ti tcp:8080 -sTCP:LISTEN)
+  [ -n "$pids" ] && kill -TERM $pids
+  sleep 2
+  pids=$(lsof -ti tcp:8080 -sTCP:LISTEN)
+  [ -n "$pids" ] && kill -KILL $pids
+  true
+
+x-ready-8080: &ready_8080
+  path: /models
+  timeout_s: 60
+
+# Ollama is a systemd service on this box. Restart it for every run so model
+# weights and KV cache start cold; OLLAMA_CONTEXT_LENGTH comes from the drop-in
+# (see header). Wait for the daemon, then force a load with a no-op prompt.
+x-ollama-start: &ollama_start |
+  sudo -n systemctl restart ollama
+  until curl -sf http://127.0.0.1:11434/v1/models >/dev/null; do sleep 0.5; done
+  ollama run {model} '' </dev/null >/dev/null 2>&1
+
+# Stop the service so the port is free (the preflight insists on it).
+x-ollama-stop: &ollama_stop |
+  sudo -n systemctl stop ollama
+  true
+
+x-ready-ollama: &ready_ollama
+  path: /models
+  timeout_s: 120
+
+# ---------------------------------------------------------------------------
+# Inference servers
+# ---------------------------------------------------------------------------
+servers:
+
+  llamafile:
+    base_url: http://127.0.0.1:8080/v1
+    label_suffix: -llamafile
+    # Every model sets refs[<server>].model explicitly (the LM Studio layout
+    # is <Repo>-GGUF/<file>.gguf, which a template can't derive from the
+    # served name). This template is only the fallback.
+    model_template: "{vars.lms_models}/{served_model_name}.gguf"
+    # Byte-identical to the Mac Studio binary (built from mozilla-ai/llamafile
+    # 42ff11b, sha256 779b9d7d..., reports v0.10.6). It is an APE, and a THIN
+    # build: it bundles no GPU module, so the CUDA module must be found on the
+    # search path. ggml-cuda.so sits NEXT TO the binary (<exe_dir> wins over
+    # ~/.llamafile/v/<version>/), which is the only way to pin it -- this build
+    # and the previous c73be59 both report v0.10.6 and so share one app dir.
+    # The module is the CUDA-graphs one built for data/20260911-l40s-cudagraphs
+    # (109,651,584 B, `CUDA graph` strings = 4); ~/.llamafile/v/0.10.6/ and the
+    # stray ~/llamafiles/ggml-cuda.so are both pre-graphs copies.
+    start_cmd: |
+      /home/mala/llamafile-42ff11b/llamafile-0.10.6-42ff11b -m {model} --server --ctx-size 16384
+    # Runs in the foreground — runner backgrounds it automatically.
+    foreground: true
+    stop_cmd: *stop_8080
+    ready_check: *ready_8080
+
+  llama-cpp:
+    base_url: http://127.0.0.1:8080/v1
+    label_suffix: -llamacpp
+    model_template: "{vars.lms_models}/{served_model_name}.gguf"
+    start_cmd: |
+      /home/mala/workspace/llama.cpp/build/bin/llama-server -m {model} --ctx-size 16384
+    foreground: true
+    stop_cmd: *stop_8080
+    ready_check: *ready_8080
+
+  # Same servers with MTP speculative decoding on, draft length 2 (LM Studio's
+  # fixed value; see the header). Only meaningful for GGUFs that carry the MTP
+  # head (blk.N.nextn.*): currently the 27B.
+  llamafile-mtp:
+    base_url: http://127.0.0.1:8080/v1
+    label_suffix: -llamafile-mtp
+    model_template: "{vars.lms_models}/{served_model_name}.gguf"
+    start_cmd: |
+      /home/mala/llamafile-42ff11b/llamafile-0.10.6-42ff11b -m {model} --server --ctx-size 16384 --spec-type draft-mtp --spec-draft-n-max 2 --spec-draft-backend-sampling
+    foreground: true
+    stop_cmd: *stop_8080
+    ready_check: *ready_8080
+
+  llama-cpp-mtp:
+    base_url: http://127.0.0.1:8080/v1
+    label_suffix: -llamacpp-mtp
+    model_template: "{vars.lms_models}/{served_model_name}.gguf"
+    start_cmd: |
+      /home/mala/workspace/llama.cpp/build/bin/llama-server -m {model} --ctx-size 16384 --spec-type draft-mtp --spec-draft-n-max 2 --spec-draft-backend-sampling
+    foreground: true
+    stop_cmd: *stop_8080
+    ready_check: *ready_8080
+
+  # Draft length 4 (Ollama's library default) for the optional qwen3.8-27b-mtp4 experiment.
+  llamafile-mtp4:
+    base_url: http://127.0.0.1:8080/v1
+    label_suffix: -llamafile-mtp4
+    model_template: "{vars.lms_models}/{served_model_name}.gguf"
+    start_cmd: |
+      /home/mala/llamafile-42ff11b/llamafile-0.10.6-42ff11b -m {model} --server --ctx-size 16384 --spec-type draft-mtp --spec-draft-n-max 4 --spec-draft-backend-sampling
+    foreground: true
+    stop_cmd: *stop_8080
+    ready_check: *ready_8080
+
+  llama-cpp-mtp4:
+    base_url: http://127.0.0.1:8080/v1
+    label_suffix: -llamacpp-mtp4
+    model_template: "{vars.lms_models}/{served_model_name}.gguf"
+    start_cmd: |
+      /home/mala/workspace/llama.cpp/build/bin/llama-server -m {model} --ctx-size 16384 --spec-type draft-mtp --spec-draft-n-max 4 --spec-draft-backend-sampling
+    foreground: true
+    stop_cmd: *stop_8080
+    ready_check: *ready_8080
+
+  ollama:
+    base_url: http://127.0.0.1:11434/v1
+    label_suffix: -ollama
+    # Registry-based — model arg is the served_model_name itself. The tags are
+    # created from the lmstudio-community GGUFs by ollama/create-lms-models.sh.
+    model_template: "{served_model_name}"
+    # Preflight: served_model_name must appear in this command's output,
+    # otherwise the model isn't pulled and the run would fail on startup.
+    list_models_cmd: ollama ls
+    start_cmd: *ollama_start
+    stop_cmd: *ollama_stop
+    ready_check: *ready_ollama
+
+  # Same daemon, different tag: the -mtp tag carries `PARAMETER draft_num_predict 2`
+  # (the -mtp4 tag 4), which makes Ollama pass --spec-type draft-mtp
+  # --spec-draft-n-max N to its bundled llama-server.
+  ollama-mtp:
+    base_url: http://127.0.0.1:11434/v1
+    label_suffix: -ollama-mtp
+    model_template: "{served_model_name}"
+    list_models_cmd: ollama ls
+    start_cmd: *ollama_start
+    stop_cmd: *ollama_stop
+    ready_check: *ready_ollama
+
+  ollama-mtp4:
+    base_url: http://127.0.0.1:11434/v1
+    label_suffix: -ollama-mtp4
+    model_template: "{served_model_name}"
+    list_models_cmd: ollama ls
+    start_cmd: *ollama_start
+    stop_cmd: *ollama_stop
+    ready_check: *ready_ollama
+
+  lm-studio:
+    base_url: http://127.0.0.1:1234/v1
+    label_suffix: -lmstudio
+    model_template: "{served_model_name}"
+    list_models_cmd: lms ls --variants
+    start_cmd: |
+      lms server start
+      lms load {model} --gpu max -c 16384
+    stop_cmd: |
+      lms unload --all
+      lms server stop
+    ready_check:
+      path: /models
+      timeout_s: 180
+
+# ---------------------------------------------------------------------------
+# Models
+# ---------------------------------------------------------------------------
+# `name`      logical prefix; also the default value of served_model_name.
+#             Kept equal to the GGUF's file stem so the llama.cpp/llamafile
+#             ready check (which compares the advertised path's basename)
+#             matches without a warning.
+# `tokenizer` HF id (or local path) passed to llama-benchy --tokenizer.
+# `refs`      per-server overrides. The YAML anchor shares the GGUF path
+#             between llamafile / llama-cpp and their -mtp twins.
+#
+# LM Studio ids must be the namespaced id it registers. `lms load` resolves a
+# bare name fuzzily, but the API match is strict -- and with
+# justInTimeModelLoading on, a miss silently loads a SECOND instance with
+# default context, which is what then serves the benchmark.
+models:
+
+  - name: Qwen3.5-0.8B-Q8_0
+    tokenizer: Qwen/Qwen3.5-0.8B
+    refs:
+      llamafile:     &gguf_0p8b { model: "{vars.lms_models}/Qwen3.5-0.8B-GGUF/Qwen3.5-0.8B-Q8_0.gguf" }
+      llama-cpp:     *gguf_0p8b
+      ollama:        { served_model_name: "qwen3.5:0.8b-lms" }
+      lm-studio:     { served_model_name: qwen/qwen3.5-0.8b }
+
+  - name: Qwen3.5-9B-Q4_K_M
+    tokenizer: Qwen/Qwen3.5-9B
+    refs:
+      llamafile:     &gguf_9b { model: "{vars.lms_models}/Qwen3.5-9B-GGUF/Qwen3.5-9B-Q4_K_M.gguf" }
+      llama-cpp:     *gguf_9b
+      ollama:        { served_model_name: "qwen3.5:9b-lms" }
+      lm-studio:     { served_model_name: qwen/qwen3.5-9b }
+
+  - name: Qwen3.8-27B-Q4_K_M
+    tokenizer: Qwen/Qwen3.8-27B
+    refs:
+      llamafile:     &gguf_27b { model: "{vars.lms_models}/Qwen3.8-27B-GGUF/Qwen3.8-27B-Q4_K_M.gguf" }
+      llama-cpp:     *gguf_27b
+      llamafile-mtp: *gguf_27b
+      llama-cpp-mtp: *gguf_27b
+      llamafile-mtp4: *gguf_27b
+      llama-cpp-mtp4: *gguf_27b
+      ollama:        { served_model_name: "qwen3.8:27b-lms" }
+      ollama-mtp:    { served_model_name: "qwen3.8:27b-lms-mtp" }
+      ollama-mtp4:   { served_model_name: "qwen3.8:27b-lms-mtp4" }
+      lm-studio:     { served_model_name: qwen/qwen3.8-27b }
+
+# ---------------------------------------------------------------------------
+# Parameter sweeps — referenced as $sweeps.pp / $sweeps.tg from experiments
+# ---------------------------------------------------------------------------
+sweeps:
+  pp: [1024, 2048, 4096, 8192]
+  tg: [32, 64]
+
+# ---------------------------------------------------------------------------
+# llama-benchy invocation.
+#
+# Available substitutions:
+#   {base_url}            from server.base_url
+#   {label}               = model.name + server.label_suffix  (--model)
+#   {served_model_name}   from model.refs[<server>].served_model_name
+#   {tokenizer}           from model.tokenizer
+#   {pp}                  single pp size for this run
+#   {tg}                  single tg size for this run
+#   {result_file}         output path chosen by the runner
+# ---------------------------------------------------------------------------
+# Uniform flag set across all servers — see notes per flag:
+#
+# llama-benchy@0.4.0: pinned. Both previous campaigns happened to resolve to
+#   0.4.0, but an unpinned `uvx llama-benchy` floats with every release.
+#
+# --no-warmup + --no-adapt-prompt: required as a pair (--no-warmup alone is a
+#   no-op while adapt_prompt is True, see llama_benchy/runner.py:39-42).
+#   Needed because LM Studio's Qwen3.5 jinja template rejects llama-benchy's
+#   "System+Empty" warmup payload (empty user content → HTTP 400). Applied
+#   everywhere for apples-to-apples comparison.
+#
+# --skip-coherence: llama-benchy's coherence test doesn't set temperature in
+#   its request body, so each server's default sampling temperature applies
+#   (ollama/llama.cpp default ~0.8). With thinking models (Qwen3-family) the
+#   reasoning trace doesn't reliably reach the expected token ("Paris") within
+#   the 100-token budget. Skipping prevents flaky matrix failures.
+#
+# --runs 15: the runner's aggregation drops the first run (warm-up) and then
+#   the 2 slowest and 2 fastest of the rest, symmetrically, and reports the
+#   trimmed mean of the remaining 10 next to the median of all 14. It refuses
+#   anything below 15 (see MIN_RUNS in run.py).
+benchy_cmd: |
+  uvx llama-benchy@0.4.0 \
+    --base-url {base_url} \
+    --model {label} \
+    --served-model-name {served_model_name} \
+    --tokenizer {tokenizer} \
+    --pp {pp} \
+    --tg {tg} \
+    --runs 15 \
+    --no-cache \
+    --no-warmup \
+    --no-adapt-prompt \
+    --skip-coherence \
+    --save-result {result_file} \
+    --format json
+
+# Where per-run result files go. Filename is built from
+# {label}_pp{pp}_tg{tg}.json by the runner.
+results_dir: ./results
+
+# ---------------------------------------------------------------------------
+# Experiments — each entry expands to a cross-product of runs.
+# ---------------------------------------------------------------------------
+experiments:
+
+  - id: qwen3.5-0.8b-all-servers
+    servers: [llamafile, llama-cpp, ollama, lm-studio]
+    models:  [Qwen3.5-0.8B-Q8_0]
+    pp: $sweeps.pp
+    tg: $sweeps.tg
+
+  - id: qwen3.5-9b-all-servers
+    servers: [llamafile, llama-cpp, ollama, lm-studio]
+    models:  [Qwen3.5-9B-Q4_K_M]
+    pp: $sweeps.pp
+    tg: $sweeps.tg
+
+  # Speculative decoding OFF. LM Studio is deliberately absent: its runtime
+  # turns MTP on whenever the GGUF has the head and offers no switch, so its
+  # 27B numbers only belong in the MTP experiment below.
+  - id: qwen3.8-27b-all-servers
+    servers: [llamafile, llama-cpp, ollama]
+    models:  [Qwen3.8-27B-Q4_K_M]
+    pp: $sweeps.pp
+    tg: $sweeps.tg
+
+  # Speculative decoding ON for everyone, draft length 2 everywhere. Expect
+  # visibly larger std here: MTP throughput depends on the acceptance rate,
+  # which depends on the generated text.
+  - id: qwen3.8-27b-mtp
+    servers: [llamafile-mtp, llama-cpp-mtp, ollama-mtp, lm-studio]
+    models:  [Qwen3.8-27B-Q4_K_M]
+    pp: $sweeps.pp
+    tg: $sweeps.tg
+
+  # OPTIONAL (+2 h on the Mac, +30 min on the pod; comment out to skip): the
+  # same three runtimes at Ollama's library default draft length 4. LM Studio
+  # cannot follow. Keeps the 2026-09-10 draft-4 cells reproducible and gives the
+  # draft-length-vs-platform data point next to the draft-2 experiment.
+  - id: qwen3.8-27b-mtp4
+    servers: [llamafile-mtp4, llama-cpp-mtp4, ollama-mtp4]
+    models:  [Qwen3.8-27B-Q4_K_M]
+    pp: $sweeps.pp
+    tg: $sweeps.tg

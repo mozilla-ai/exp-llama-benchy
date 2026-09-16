@@ -1,0 +1,12 @@
+# TAG qwen3.5:0.8b-lms
+# Same weights LM Studio / llama.cpp / llamafile serve. TEMPLATE, RENDERER,
+# PARSER and PARAMETERs copied from `ollama show --modelfile qwen3.5:0.8b`, so
+# the only difference to the library tag is the GGUF (and no vision projector).
+FROM @LMS@/Qwen3.5-0.8B-GGUF/Qwen3.5-0.8B-Q8_0.gguf
+TEMPLATE {{ .Prompt }}
+RENDERER qwen3.5
+PARSER qwen3.5
+PARAMETER presence_penalty 1.5
+PARAMETER temperature 1
+PARAMETER top_k 20
+PARAMETER top_p 0.95

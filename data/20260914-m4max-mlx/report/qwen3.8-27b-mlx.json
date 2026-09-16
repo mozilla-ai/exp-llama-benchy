@@ -1,0 +1,2635 @@
+{
+  "experiment_id": "qwen3.8-27b-mlx",
+  "generated_at": "2026-09-14T11:22:35.879502+00:00",
+  "config": {
+    "vars": {
+      "lms_models": "/Users/mala/.lmstudio/models/lmstudio-community"
+    },
+    "x-stop-8080": "pids=$(lsof -ti tcp:8080 -sTCP:LISTEN)\n[ -n \"$pids\" ] && kill -TERM $pids\nsleep 2\npids=$(lsof -ti tcp:8080 -sTCP:LISTEN)\n[ -n \"$pids\" ] && kill -KILL $pids\ntrue\n",
+    "x-ready-8080": {
+      "path": "/models",
+      "timeout_s": 60
+    },
+    "x-ollama-start": "mkdir -p logs\nOLLAMA_CONTEXT_LENGTH=16384 ollama serve >>logs/ollama-serve.log 2>&1 &\necho $! > /tmp/benchy-ollama.pid\nuntil curl -sf http://127.0.0.1:11434/v1/models >/dev/null; do sleep 0.5; done\nollama run {model} '' </dev/null >/dev/null 2>&1\n",
+    "x-ollama-stop": "kill \"$(cat /tmp/benchy-ollama.pid 2>/dev/null)\" 2>/dev/null || true\nrm -f /tmp/benchy-ollama.pid\nkillall Ollama 2>/dev/null || true\n",
+    "x-ready-ollama": {
+      "path": "/models",
+      "timeout_s": 120
+    },
+    "servers": {
+      "llamafile": {
+        "base_url": "http://127.0.0.1:8080/v1",
+        "label_suffix": "-llamafile",
+        "model_template": "{vars.lms_models}/{served_model_name}.gguf",
+        "start_cmd": "/Users/mala/llamafile-42ff11b/llamafile-0.10.6-42ff11b -m {model} --server --ctx-size 16384\n",
+        "foreground": true,
+        "stop_cmd": "pids=$(lsof -ti tcp:8080 -sTCP:LISTEN)\n[ -n \"$pids\" ] && kill -TERM $pids\nsleep 2\npids=$(lsof -ti tcp:8080 -sTCP:LISTEN)\n[ -n \"$pids\" ] && kill -KILL $pids\ntrue\n",
+        "ready_check": {
+          "path": "/models",
+          "timeout_s": 60
+        }
+      },
+      "llama-cpp": {
+        "base_url": "http://127.0.0.1:8080/v1",
+        "label_suffix": "-llamacpp",
+        "model_template": "{vars.lms_models}/{served_model_name}.gguf",
+        "start_cmd": "/Users/mala/workspace/llama.cpp/build/bin/llama-server -m {model} --ctx-size 16384\n",
+        "foreground": true,
+        "stop_cmd": "pids=$(lsof -ti tcp:8080 -sTCP:LISTEN)\n[ -n \"$pids\" ] && kill -TERM $pids\nsleep 2\npids=$(lsof -ti tcp:8080 -sTCP:LISTEN)\n[ -n \"$pids\" ] && kill -KILL $pids\ntrue\n",
+        "ready_check": {
+          "path": "/models",
+          "timeout_s": 60
+        }
+      },
+      "llamafile-mtp": {
+        "base_url": "http://127.0.0.1:8080/v1",
+        "label_suffix": "-llamafile-mtp",
+        "model_template": "{vars.lms_models}/{served_model_name}.gguf",
+        "start_cmd": "/Users/mala/llamafile-42ff11b/llamafile-0.10.6-42ff11b -m {model} --server --ctx-size 16384 --spec-type draft-mtp --spec-draft-n-max 2 --spec-draft-backend-sampling\n",
+        "foreground": true,
+        "stop_cmd": "pids=$(lsof -ti tcp:8080 -sTCP:LISTEN)\n[ -n \"$pids\" ] && kill -TERM $pids\nsleep 2\npids=$(lsof -ti tcp:8080 -sTCP:LISTEN)\n[ -n \"$pids\" ] && kill -KILL $pids\ntrue\n",
+        "ready_check": {
+          "path": "/models",
+          "timeout_s": 60
+        }
+      },
+      "llama-cpp-mtp": {
+        "base_url": "http://127.0.0.1:8080/v1",
+        "label_suffix": "-llamacpp-mtp",
+        "model_template": "{vars.lms_models}/{served_model_name}.gguf",
+        "start_cmd": "/Users/mala/workspace/llama.cpp/build/bin/llama-server -m {model} --ctx-size 16384 --spec-type draft-mtp --spec-draft-n-max 2 --spec-draft-backend-sampling\n",
+        "foreground": true,
+        "stop_cmd": "pids=$(lsof -ti tcp:8080 -sTCP:LISTEN)\n[ -n \"$pids\" ] && kill -TERM $pids\nsleep 2\npids=$(lsof -ti tcp:8080 -sTCP:LISTEN)\n[ -n \"$pids\" ] && kill -KILL $pids\ntrue\n",
+        "ready_check": {
+          "path": "/models",
+          "timeout_s": 60
+        }
+      },
+      "llamafile-mtp4": {
+        "base_url": "http://127.0.0.1:8080/v1",
+        "label_suffix": "-llamafile-mtp4",
+        "model_template": "{vars.lms_models}/{served_model_name}.gguf",
+        "start_cmd": "/Users/mala/llamafile-42ff11b/llamafile-0.10.6-42ff11b -m {model} --server --ctx-size 16384 --spec-type draft-mtp --spec-draft-n-max 4 --spec-draft-backend-sampling\n",
+        "foreground": true,
+        "stop_cmd": "pids=$(lsof -ti tcp:8080 -sTCP:LISTEN)\n[ -n \"$pids\" ] && kill -TERM $pids\nsleep 2\npids=$(lsof -ti tcp:8080 -sTCP:LISTEN)\n[ -n \"$pids\" ] && kill -KILL $pids\ntrue\n",
+        "ready_check": {
+          "path": "/models",
+          "timeout_s": 60
+        }
+      },
+      "llama-cpp-mtp4": {
+        "base_url": "http://127.0.0.1:8080/v1",
+        "label_suffix": "-llamacpp-mtp4",
+        "model_template": "{vars.lms_models}/{served_model_name}.gguf",
+        "start_cmd": "/Users/mala/workspace/llama.cpp/build/bin/llama-server -m {model} --ctx-size 16384 --spec-type draft-mtp --spec-draft-n-max 4 --spec-draft-backend-sampling\n",
+        "foreground": true,
+        "stop_cmd": "pids=$(lsof -ti tcp:8080 -sTCP:LISTEN)\n[ -n \"$pids\" ] && kill -TERM $pids\nsleep 2\npids=$(lsof -ti tcp:8080 -sTCP:LISTEN)\n[ -n \"$pids\" ] && kill -KILL $pids\ntrue\n",
+        "ready_check": {
+          "path": "/models",
+          "timeout_s": 60
+        }
+      },
+      "ollama": {
+        "base_url": "http://127.0.0.1:11434/v1",
+        "label_suffix": "-ollama",
+        "model_template": "{served_model_name}",
+        "list_models_cmd": "ollama ls",
+        "start_cmd": "mkdir -p logs\nOLLAMA_CONTEXT_LENGTH=16384 ollama serve >>logs/ollama-serve.log 2>&1 &\necho $! > /tmp/benchy-ollama.pid\nuntil curl -sf http://127.0.0.1:11434/v1/models >/dev/null; do sleep 0.5; done\nollama run {model} '' </dev/null >/dev/null 2>&1\n",
+        "stop_cmd": "kill \"$(cat /tmp/benchy-ollama.pid 2>/dev/null)\" 2>/dev/null || true\nrm -f /tmp/benchy-ollama.pid\nkillall Ollama 2>/dev/null || true\n",
+        "ready_check": {
+          "path": "/models",
+          "timeout_s": 120
+        }
+      },
+      "ollama-mtp": {
+        "base_url": "http://127.0.0.1:11434/v1",
+        "label_suffix": "-ollama-mtp",
+        "model_template": "{served_model_name}",
+        "list_models_cmd": "ollama ls",
+        "start_cmd": "mkdir -p logs\nOLLAMA_CONTEXT_LENGTH=16384 ollama serve >>logs/ollama-serve.log 2>&1 &\necho $! > /tmp/benchy-ollama.pid\nuntil curl -sf http://127.0.0.1:11434/v1/models >/dev/null; do sleep 0.5; done\nollama run {model} '' </dev/null >/dev/null 2>&1\n",
+        "stop_cmd": "kill \"$(cat /tmp/benchy-ollama.pid 2>/dev/null)\" 2>/dev/null || true\nrm -f /tmp/benchy-ollama.pid\nkillall Ollama 2>/dev/null || true\n",
+        "ready_check": {
+          "path": "/models",
+          "timeout_s": 120
+        }
+      },
+      "ollama-mtp4": {
+        "base_url": "http://127.0.0.1:11434/v1",
+        "label_suffix": "-ollama-mtp4",
+        "model_template": "{served_model_name}",
+        "list_models_cmd": "ollama ls",
+        "start_cmd": "mkdir -p logs\nOLLAMA_CONTEXT_LENGTH=16384 ollama serve >>logs/ollama-serve.log 2>&1 &\necho $! > /tmp/benchy-ollama.pid\nuntil curl -sf http://127.0.0.1:11434/v1/models >/dev/null; do sleep 0.5; done\nollama run {model} '' </dev/null >/dev/null 2>&1\n",
+        "stop_cmd": "kill \"$(cat /tmp/benchy-ollama.pid 2>/dev/null)\" 2>/dev/null || true\nrm -f /tmp/benchy-ollama.pid\nkillall Ollama 2>/dev/null || true\n",
+        "ready_check": {
+          "path": "/models",
+          "timeout_s": 120
+        }
+      },
+      "lm-studio": {
+        "base_url": "http://127.0.0.1:1234/v1",
+        "label_suffix": "-lmstudio",
+        "model_template": "{served_model_name}",
+        "list_models_cmd": "lms ls --variants",
+        "start_cmd": "lms server start\nlms load -y {model} --gpu max -c 16384\n",
+        "stop_cmd": "lms unload --all\nlms server stop\n",
+        "ready_check": {
+          "path": "/models",
+          "timeout_s": 180
+        }
+      }
+    },
+    "models": [
+      {
+        "name": "Qwen3.5-0.8B-Q8_0",
+        "tokenizer": "Qwen/Qwen3.5-0.8B",
+        "refs": {
+          "llamafile": {
+            "model": "{vars.lms_models}/Qwen3.5-0.8B-GGUF/Qwen3.5-0.8B-Q8_0.gguf"
+          },
+          "llama-cpp": {
+            "model": "{vars.lms_models}/Qwen3.5-0.8B-GGUF/Qwen3.5-0.8B-Q8_0.gguf"
+          },
+          "ollama": {
+            "served_model_name": "qwen3.5:0.8b-lms"
+          },
+          "lm-studio": {
+            "served_model_name": "gguf-local/qwen3.5-0.8b"
+          }
+        }
+      },
+      {
+        "name": "Qwen3.5-9B-Q4_K_M",
+        "tokenizer": "Qwen/Qwen3.5-9B",
+        "refs": {
+          "llamafile": {
+            "model": "{vars.lms_models}/Qwen3.5-9B-GGUF/Qwen3.5-9B-Q4_K_M.gguf"
+          },
+          "llama-cpp": {
+            "model": "{vars.lms_models}/Qwen3.5-9B-GGUF/Qwen3.5-9B-Q4_K_M.gguf"
+          },
+          "ollama": {
+            "served_model_name": "qwen3.5:9b-lms"
+          },
+          "lm-studio": {
+            "served_model_name": "gguf-local/qwen3.5-9b"
+          }
+        }
+      },
+      {
+        "name": "Qwen3.8-27B-Q4_K_M",
+        "tokenizer": "Qwen/Qwen3.8-27B",
+        "refs": {
+          "llamafile": {
+            "model": "{vars.lms_models}/Qwen3.8-27B-GGUF/Qwen3.8-27B-Q4_K_M.gguf"
+          },
+          "llama-cpp": {
+            "model": "{vars.lms_models}/Qwen3.8-27B-GGUF/Qwen3.8-27B-Q4_K_M.gguf"
+          },
+          "llamafile-mtp": {
+            "model": "{vars.lms_models}/Qwen3.8-27B-GGUF/Qwen3.8-27B-Q4_K_M.gguf"
+          },
+          "llama-cpp-mtp": {
+            "model": "{vars.lms_models}/Qwen3.8-27B-GGUF/Qwen3.8-27B-Q4_K_M.gguf"
+          },
+          "llamafile-mtp4": {
+            "model": "{vars.lms_models}/Qwen3.8-27B-GGUF/Qwen3.8-27B-Q4_K_M.gguf"
+          },
+          "llama-cpp-mtp4": {
+            "model": "{vars.lms_models}/Qwen3.8-27B-GGUF/Qwen3.8-27B-Q4_K_M.gguf"
+          },
+          "ollama": {
+            "served_model_name": "qwen3.8:27b-lms"
+          },
+          "ollama-mtp": {
+            "served_model_name": "qwen3.8:27b-lms-mtp"
+          },
+          "ollama-mtp4": {
+            "served_model_name": "qwen3.8:27b-lms-mtp4"
+          },
+          "lm-studio": {
+            "served_model_name": "gguf-local/qwen3.8-27b"
+          }
+        }
+      },
+      {
+        "name": "Qwen3.8-27B-MLX-4bit",
+        "tokenizer": "Qwen/Qwen3.8-27B",
+        "refs": {
+          "ollama": {
+            "served_model_name": "qwen3.8:27b-mlx"
+          },
+          "lm-studio": {
+            "served_model_name": "mlx-local/qwen3.8-27b-mlx"
+          }
+        }
+      }
+    ],
+    "sweeps": {
+      "pp": [
+        1024,
+        2048,
+        4096,
+        8192
+      ],
+      "tg": [
+        32,
+        64
+      ]
+    },
+    "benchy_cmd": "uvx llama-benchy@0.4.0 \\\n  --base-url {base_url} \\\n  --model {label} \\\n  --served-model-name {served_model_name} \\\n  --tokenizer {tokenizer} \\\n  --pp {pp} \\\n  --tg {tg} \\\n  --runs 15 \\\n  --no-cache \\\n  --no-warmup \\\n  --no-adapt-prompt \\\n  --skip-coherence \\\n  --save-result {result_file} \\\n  --format json\n",
+    "results_dir": "./results",
+    "experiments": [
+      {
+        "id": "qwen3.5-0.8b-all-servers",
+        "servers": [
+          "llamafile",
+          "llama-cpp",
+          "ollama",
+          "lm-studio"
+        ],
+        "models": [
+          "Qwen3.5-0.8B-Q8_0"
+        ],
+        "pp": "$sweeps.pp",
+        "tg": "$sweeps.tg"
+      },
+      {
+        "id": "qwen3.5-9b-all-servers",
+        "servers": [
+          "llamafile",
+          "llama-cpp",
+          "ollama",
+          "lm-studio"
+        ],
+        "models": [
+          "Qwen3.5-9B-Q4_K_M"
+        ],
+        "pp": "$sweeps.pp",
+        "tg": "$sweeps.tg"
+      },
+      {
+        "id": "qwen3.8-27b-all-servers",
+        "servers": [
+          "llamafile",
+          "llama-cpp",
+          "ollama"
+        ],
+        "models": [
+          "Qwen3.8-27B-Q4_K_M"
+        ],
+        "pp": "$sweeps.pp",
+        "tg": "$sweeps.tg"
+      },
+      {
+        "id": "qwen3.8-27b-mtp",
+        "servers": [
+          "llamafile-mtp",
+          "llama-cpp-mtp",
+          "ollama-mtp",
+          "lm-studio"
+        ],
+        "models": [
+          "Qwen3.8-27B-Q4_K_M"
+        ],
+        "pp": "$sweeps.pp",
+        "tg": "$sweeps.tg"
+      },
+      {
+        "id": "qwen3.8-27b-mtp4",
+        "servers": [
+          "llamafile-mtp4",
+          "llama-cpp-mtp4",
+          "ollama-mtp4"
+        ],
+        "models": [
+          "Qwen3.8-27B-Q4_K_M"
+        ],
+        "pp": "$sweeps.pp",
+        "tg": "$sweeps.tg"
+      },
+      {
+        "id": "qwen3.8-27b-mlx",
+        "servers": [
+          "ollama",
+          "lm-studio"
+        ],
+        "models": [
+          "Qwen3.8-27B-MLX-4bit"
+        ],
+        "pp": "$sweeps.pp",
+        "tg": "$sweeps.tg"
+      }
+    ]
+  },
+  "runs": [
+    {
+      "experiment_id": "qwen3.8-27b-mlx",
+      "server": "ollama",
+      "model": "Qwen3.8-27B-MLX-4bit",
+      "label": "Qwen3.8-27B-MLX-4bit-ollama",
+      "pp": 1024,
+      "tg": 32,
+      "status": "success",
+      "result_file": "results/qwen3.8-27b-mlx_Qwen3.8-27B-MLX-4bit-ollama_pp1024_tg32.json",
+      "metrics": {
+        "pp_throughput": {
+          "mean": 247.86738842573104,
+          "std": 0.5154811811712995,
+          "n": 10,
+          "median": 247.75964628101752,
+          "sd": 0.6697692600443378,
+          "n_all": 14,
+          "trimmed_low": [
+            246.5486966279392,
+            247.0114617147756
+          ],
+          "trimmed_high": [
+            248.6248970085175,
+            248.6463455716674
+          ],
+          "kept": [
+            247.1533231470667,
+            247.23313368818464,
+            247.36302192346895,
+            247.65725133935425,
+            247.66998575405702,
+            247.84930680797805,
+            248.16142030535815,
+            248.469939710929,
+            248.5188943917114,
+            248.59760718920205
+          ],
+          "sample": [
+            246.5486966279392,
+            248.59760718920205,
+            247.36302192346895,
+            248.16142030535815,
+            247.23313368818464,
+            247.1533231470667,
+            247.0114617147756,
+            247.84930680797805,
+            247.66998575405702,
+            248.6463455716674,
+            247.65725133935425,
+            248.6248970085175,
+            248.469939710929,
+            248.5188943917114
+          ]
+        },
+        "tg_throughput": {
+          "mean": 54.8920996705689,
+          "std": 3.315356582896572,
+          "n": 10,
+          "median": 55.15550789899573,
+          "sd": 5.469408197611679,
+          "n_all": 14,
+          "trimmed_low": [
+            42.416618390880956,
+            46.99334198329419
+          ],
+          "trimmed_high": [
+            60.0011176872222,
+            63.15401853600045
+          ],
+          "kept": [
+            50.583398540552245,
+            50.63923867360835,
+            51.06264870515696,
+            52.42000391211447,
+            55.021886036028214,
+            55.289129761963245,
+            57.92685396872317,
+            58.06696015773825,
+            58.91792940978175,
+            58.992947540022364
+          ],
+          "sample": [
+            50.63923867360835,
+            57.92685396872317,
+            50.583398540552245,
+            52.42000391211447,
+            55.289129761963245,
+            58.06696015773825,
+            60.0011176872222,
+            55.021886036028214,
+            63.15401853600045,
+            42.416618390880956,
+            58.91792940978175,
+            51.06264870515696,
+            58.992947540022364,
+            46.99334198329419
+          ]
+        },
+        "ttfr": {
+          "mean": 4175.252170767635,
+          "std": 8.593935051818766,
+          "n": 10,
+          "median": 4175.540958531201,
+          "sd": 11.261594622376123,
+          "n_all": 14,
+          "trimmed_low": [
+            4162.569209001958,
+            4162.927959114313
+          ],
+          "trimmed_high": [
+            4190.093000419438,
+            4197.950082831085
+          ],
+          "kept": [
+            4163.384499959648,
+            4164.701875299215,
+            4165.521625429392,
+            4170.695249922574,
+            4175.13966653496,
+            4175.9422505274415,
+            4178.962833248079,
+            4184.143666177988,
+            4186.339749954641,
+            4187.690290622413
+          ],
+          "sample": [
+            4197.950082831085,
+            4163.384499959648,
+            4184.143666177988,
+            4170.695249922574,
+            4186.339749954641,
+            4187.690290622413,
+            4190.093000419438,
+            4175.9422505274415,
+            4178.962833248079,
+            4162.569209001958,
+            4175.13966653496,
+            4162.927959114313,
+            4165.521625429392,
+            4164.701875299215
+          ]
+        }
+      }
+    },
+    {
+      "experiment_id": "qwen3.8-27b-mlx",
+      "server": "lm-studio",
+      "model": "Qwen3.8-27B-MLX-4bit",
+      "label": "Qwen3.8-27B-MLX-4bit-lmstudio",
+      "pp": 1024,
+      "tg": 32,
+      "status": "success",
+      "result_file": "results/qwen3.8-27b-mlx_Qwen3.8-27B-MLX-4bit-lmstudio_pp1024_tg32.json",
+      "metrics": {
+        "pp_throughput": {
+          "mean": 245.19427229147277,
+          "std": 0.8987741501382446,
+          "n": 10,
+          "median": 245.77511926283884,
+          "sd": 1.0015069222811737,
+          "n_all": 14,
+          "trimmed_low": [
+            243.5226731241996,
+            243.66650611765334
+          ],
+          "trimmed_high": [
+            245.81199382178022,
+            246.01620176725288
+          ],
+          "kept": [
+            243.7301839980073,
+            243.82535004557383,
+            243.9130637168594,
+            245.76712663555804,
+            245.76975331456725,
+            245.78048521111043,
+            245.78052029479804,
+            245.78201739985005,
+            245.79550393180412,
+            245.7987183665991
+          ],
+          "sample": [
+            243.5226731241996,
+            243.66650611765334,
+            245.78201739985005,
+            245.78048521111043,
+            245.76975331456725,
+            245.79550393180412,
+            243.9130637168594,
+            245.81199382178022,
+            245.78052029479804,
+            243.82535004557383,
+            246.01620176725288,
+            245.7987183665991,
+            243.7301839980073,
+            245.76712663555804
+          ]
+        },
+        "tg_throughput": {
+          "mean": 31.488388342330786,
+          "std": 0.5189769515302919,
+          "n": 10,
+          "median": 31.1571743015747,
+          "sd": 0.5492095894177446,
+          "n_all": 14,
+          "trimmed_low": [
+            31.114520858191895,
+            31.11839779147912
+          ],
+          "trimmed_high": [
+            32.29314711593659,
+            32.30054872213965
+          ],
+          "kept": [
+            31.127560855666225,
+            31.134611407466327,
+            31.139920932158834,
+            31.15319388742612,
+            31.155435672921566,
+            31.15891293022783,
+            31.171486810653455,
+            32.274849725452135,
+            32.281025700656265,
+            32.28688550067908
+          ],
+          "sample": [
+            32.281025700656265,
+            32.29314711593659,
+            31.127560855666225,
+            31.114520858191895,
+            31.15319388742612,
+            31.11839779147912,
+            32.274849725452135,
+            31.139920932158834,
+            31.171486810653455,
+            32.30054872213965,
+            31.155435672921566,
+            31.134611407466327,
+            32.28688550067908,
+            31.15891293022783
+          ]
+        },
+        "ttfr": {
+          "mean": 4390.851808339357,
+          "std": 16.125014032328192,
+          "n": 10,
+          "median": 4380.4020415991545,
+          "sd": 17.742238911830015,
+          "n_all": 14,
+          "trimmed_low": [
+            4379.74529247731,
+            4379.981709644198
+          ],
+          "trimmed_high": [
+            4418.287749402225,
+            4420.895917341113
+          ],
+          "kept": [
+            4380.03895804286,
+            4380.1766242831945,
+            4380.27916662395,
+            4380.305833183229,
+            4380.3064581006765,
+            4380.497625097632,
+            4380.544416606426,
+            4413.824000395834,
+            4415.410959161818,
+            4417.134041897953
+          ],
+          "sample": [
+            4420.895917341113,
+            4418.287749402225,
+            4380.27916662395,
+            4380.3064581006765,
+            4380.497625097632,
+            4380.03895804286,
+            4413.824000395834,
+            4379.74529247731,
+            4380.305833183229,
+            4415.410959161818,
+            4380.1766242831945,
+            4379.981709644198,
+            4417.134041897953,
+            4380.544416606426
+          ]
+        }
+      }
+    },
+    {
+      "experiment_id": "qwen3.8-27b-mlx",
+      "server": "ollama",
+      "model": "Qwen3.8-27B-MLX-4bit",
+      "label": "Qwen3.8-27B-MLX-4bit-ollama",
+      "pp": 1024,
+      "tg": 64,
+      "status": "success",
+      "result_file": "results/qwen3.8-27b-mlx_Qwen3.8-27B-MLX-4bit-ollama_pp1024_tg64.json",
+      "metrics": {
+        "pp_throughput": {
+          "mean": 248.2107143895605,
+          "std": 0.2510314866277734,
+          "n": 10,
+          "median": 248.30607002178272,
+          "sd": 0.5712843497479537,
+          "n_all": 14,
+          "trimmed_low": [
+            246.4216008283086,
+            247.34026409352157
+          ],
+          "trimmed_high": [
+            248.54911526357404,
+            248.58155620972278
+          ],
+          "kept": [
+            247.72730132212027,
+            247.87828553042462,
+            248.01829149483916,
+            248.1248323775359,
+            248.2087105445767,
+            248.40342949898874,
+            248.41984722092766,
+            248.44090388359527,
+            248.44199071531182,
+            248.4435513072851
+          ],
+          "sample": [
+            248.01829149483916,
+            248.1248323775359,
+            246.4216008283086,
+            247.34026409352157,
+            248.4435513072851,
+            247.87828553042462,
+            248.41984722092766,
+            248.2087105445767,
+            247.72730132212027,
+            248.44199071531182,
+            248.54911526357404,
+            248.58155620972278,
+            248.40342949898874,
+            248.44090388359527
+          ]
+        },
+        "tg_throughput": {
+          "mean": 58.32316315828698,
+          "std": 2.1954574273162875,
+          "n": 10,
+          "median": 56.95730724383167,
+          "sd": 3.871304009312985,
+          "n_all": 14,
+          "trimmed_low": [
+            51.83434263983985,
+            54.66591481815743
+          ],
+          "trimmed_high": [
+            63.98253448350393,
+            67.00450169675307
+          ],
+          "kept": [
+            56.17815759924956,
+            56.42347069201466,
+            56.84286600598157,
+            56.8993254586543,
+            56.95196257239685,
+            56.96265191526649,
+            59.353191530551534,
+            59.37326100870707,
+            61.418449358611724,
+            62.82829544143608
+          ],
+          "sample": [
+            56.42347069201466,
+            54.66591481815743,
+            62.82829544143608,
+            67.00450169675307,
+            51.83434263983985,
+            56.17815759924956,
+            56.96265191526649,
+            56.8993254586543,
+            61.418449358611724,
+            56.84286600598157,
+            56.95196257239685,
+            59.353191530551534,
+            63.98253448350393,
+            59.37326100870707
+          ]
+        },
+        "ttfr": {
+          "mean": 4169.137733615935,
+          "std": 5.069056980272549,
+          "n": 10,
+          "median": 4168.117146007717,
+          "sd": 10.287380839569728,
+          "n_all": 14,
+          "trimmed_low": [
+            4162.0835000649095,
+            4162.454125471413
+          ],
+          "trimmed_high": [
+            4184.647083282471,
+            4200.231957249343
+          ],
+          "kept": [
+            4162.728958763182,
+            4163.771875202656,
+            4164.314791560173,
+            4165.991334244609,
+            4166.126791387796,
+            4170.107500627637,
+            4171.428459696472,
+            4173.218582756817,
+            4175.57333316654,
+            4178.115708753467
+          ],
+          "sample": [
+            4173.218582756817,
+            4171.428459696472,
+            4200.231957249343,
+            4184.647083282471,
+            4170.107500627637,
+            4175.57333316654,
+            4162.454125471413,
+            4165.991334244609,
+            4178.115708753467,
+            4162.0835000649095,
+            4164.314791560173,
+            4163.771875202656,
+            4162.728958763182,
+            4166.126791387796
+          ]
+        }
+      }
+    },
+    {
+      "experiment_id": "qwen3.8-27b-mlx",
+      "server": "lm-studio",
+      "model": "Qwen3.8-27B-MLX-4bit",
+      "label": "Qwen3.8-27B-MLX-4bit-lmstudio",
+      "pp": 1024,
+      "tg": 64,
+      "status": "success",
+      "result_file": "results/qwen3.8-27b-mlx_Qwen3.8-27B-MLX-4bit-lmstudio_pp1024_tg64.json",
+      "metrics": {
+        "pp_throughput": {
+          "mean": 245.71512885835222,
+          "std": 0.05903950566795993,
+          "n": 10,
+          "median": 245.73081552306155,
+          "sd": 0.711208749039698,
+          "n_all": 14,
+          "trimmed_low": [
+            243.7341444717184,
+            243.75374570318633
+          ],
+          "trimmed_high": [
+            245.94097172712623,
+            245.98496641583208
+          ],
+          "kept": [
+            245.5571865098795,
+            245.67839403282892,
+            245.70092984957515,
+            245.7188776766429,
+            245.72162258310019,
+            245.7400084630229,
+            245.7505366155786,
+            245.75683242349442,
+            245.76015118503727,
+            245.7667492443626
+          ],
+          "sample": [
+            245.75683242349442,
+            245.72162258310019,
+            243.75374570318633,
+            245.7400084630229,
+            245.98496641583208,
+            245.94097172712623,
+            245.7505366155786,
+            245.7188776766429,
+            245.7667492443626,
+            243.7341444717184,
+            245.67839403282892,
+            245.5571865098795,
+            245.70092984957515,
+            245.76015118503727
+          ]
+        },
+        "tg_throughput": {
+          "mean": 30.06843917372579,
+          "std": 0.020380431299752092,
+          "n": 10,
+          "median": 30.061235270969274,
+          "sd": 0.1869487221807168,
+          "n_all": 14,
+          "trimmed_low": [
+            30.04479946610911,
+            30.04707820862327
+          ],
+          "trimmed_high": [
+            30.564570132094747,
+            30.62577786859335
+          ],
+          "kept": [
+            30.048823289095285,
+            30.049104837426025,
+            30.053218434514463,
+            30.05387702825617,
+            30.060034014025653,
+            30.062436527912894,
+            30.0683557961594,
+            30.082909354526194,
+            30.091161655598402,
+            30.11447079974341
+          ],
+          "sample": [
+            30.04479946610911,
+            30.091161655598402,
+            30.564570132094747,
+            30.053218434514463,
+            30.060034014025653,
+            30.049104837426025,
+            30.05387702825617,
+            30.048823289095285,
+            30.11447079974341,
+            30.62577786859335,
+            30.04707820862327,
+            30.0683557961594,
+            30.062436527912894,
+            30.082909354526194
+          ]
+        },
+        "ttfr": {
+          "mean": 4381.319737806916,
+          "std": 1.0015831894629428,
+          "n": 10,
+          "median": 4381.125375628471,
+          "sd": 12.445911966510742,
+          "n_all": 14,
+          "trimmed_low": [
+            4380.296874791384,
+            4380.414417013526
+          ],
+          "trimmed_high": [
+            4416.453042067587,
+            4416.808041743934
+          ],
+          "kept": [
+            4380.473542027175,
+            4380.478250794113,
+            4380.585708655417,
+            4380.773291923106,
+            4381.100917235017,
+            4381.149834021926,
+            4381.2614576891065,
+            4381.4697079360485,
+            4381.871417164803,
+            4384.033250622451
+          ],
+          "sample": [
+            4380.473542027175,
+            4381.100917235017,
+            4416.453042067587,
+            4380.773291923106,
+            4380.478250794113,
+            4381.2614576891065,
+            4380.585708655417,
+            4381.149834021926,
+            4380.296874791384,
+            4416.808041743934,
+            4381.871417164803,
+            4384.033250622451,
+            4381.4697079360485,
+            4380.414417013526
+          ]
+        }
+      }
+    },
+    {
+      "experiment_id": "qwen3.8-27b-mlx",
+      "server": "ollama",
+      "model": "Qwen3.8-27B-MLX-4bit",
+      "label": "Qwen3.8-27B-MLX-4bit-ollama",
+      "pp": 2048,
+      "tg": 32,
+      "status": "success",
+      "result_file": "results/qwen3.8-27b-mlx_Qwen3.8-27B-MLX-4bit-ollama_pp2048_tg32.json",
+      "metrics": {
+        "pp_throughput": {
+          "mean": 250.60520168157126,
+          "std": 0.154222880635825,
+          "n": 10,
+          "median": 250.54002899549948,
+          "sd": 0.19792372118421828,
+          "n_all": 14,
+          "trimmed_low": [
+            250.30904489591558,
+            250.3690868213792
+          ],
+          "trimmed_high": [
+            250.8846793529558,
+            250.90381403326478
+          ],
+          "kept": [
+            250.40031376189836,
+            250.46556610096263,
+            250.48479953901986,
+            250.51775672375783,
+            250.52842415066996,
+            250.551633840329,
+            250.6292396107258,
+            250.815801652293,
+            250.82072410917655,
+            250.83775732687963
+          ],
+          "sample": [
+            250.40031376189836,
+            250.82072410917655,
+            250.51775672375783,
+            250.46556610096263,
+            250.30904489591558,
+            250.3690868213792,
+            250.551633840329,
+            250.8846793529558,
+            250.52842415066996,
+            250.48479953901986,
+            250.6292396107258,
+            250.83775732687963,
+            250.90381403326478,
+            250.815801652293
+          ]
+        },
+        "tg_throughput": {
+          "mean": 55.627405553249524,
+          "std": 3.3851352712217575,
+          "n": 10,
+          "median": 55.3364786595139,
+          "sd": 5.279443406020743,
+          "n_all": 14,
+          "trimmed_low": [
+            45.034514913924745,
+            48.42906278962497
+          ],
+          "trimmed_high": [
+            62.964911022499884,
+            63.264558294233915
+          ],
+          "kept": [
+            49.446393074949185,
+            52.557505456508906,
+            53.40461986686785,
+            54.34132392823131,
+            54.51465612499044,
+            56.158301194037364,
+            56.41623168543016,
+            58.4242370875235,
+            59.31936755988368,
+            61.69141955407289
+          ],
+          "sample": [
+            49.446393074949185,
+            48.42906278962497,
+            54.51465612499044,
+            58.4242370875235,
+            53.40461986686785,
+            45.034514913924745,
+            61.69141955407289,
+            54.34132392823131,
+            52.557505456508906,
+            63.264558294233915,
+            56.41623168543016,
+            59.31936755988368,
+            56.158301194037364,
+            62.964911022499884
+          ]
+        },
+        "ttfr": {
+          "mean": 8216.260508261621,
+          "std": 5.4837583617225265,
+          "n": 10,
+          "median": 8218.77527050674,
+          "sd": 6.913848030768866,
+          "n_all": 14,
+          "trimmed_low": [
+            8205.20129147917,
+            8206.310041248798
+          ],
+          "trimmed_high": [
+            8223.82824961096,
+            8225.799958221614
+          ],
+          "kept": [
+            8206.935624592006,
+            8208.470082841814,
+            8209.027250297368,
+            8217.839417047799,
+            8218.600374646485,
+            8218.950166366994,
+            8219.285999424756,
+            8220.031041651964,
+            8220.66195961088,
+            8222.803166136146
+          ],
+          "sample": [
+            8222.803166136146,
+            8209.027250297368,
+            8218.950166366994,
+            8220.66195961088,
+            8225.799958221614,
+            8223.82824961096,
+            8217.839417047799,
+            8206.935624592006,
+            8218.600374646485,
+            8220.031041651964,
+            8219.285999424756,
+            8208.470082841814,
+            8206.310041248798,
+            8205.20129147917
+          ]
+        }
+      }
+    },
+    {
+      "experiment_id": "qwen3.8-27b-mlx",
+      "server": "lm-studio",
+      "model": "Qwen3.8-27B-MLX-4bit",
+      "label": "Qwen3.8-27B-MLX-4bit-lmstudio",
+      "pp": 2048,
+      "tg": 32,
+      "status": "success",
+      "result_file": "results/qwen3.8-27b-mlx_Qwen3.8-27B-MLX-4bit-lmstudio_pp2048_tg32.json",
+      "metrics": {
+        "pp_throughput": {
+          "mean": 250.0335148479543,
+          "std": 0.04222115381884529,
+          "n": 10,
+          "median": 250.05171270390116,
+          "sd": 0.07622295913055874,
+          "n_all": 14,
+          "trimmed_low": [
+            249.8659672565861,
+            249.9045317410273
+          ],
+          "trimmed_high": [
+            250.12294339362938,
+            250.14083566603122
+          ],
+          "kept": [
+            249.9361063621193,
+            249.97771653480797,
+            250.02346325974045,
+            250.02914277828873,
+            250.0502990312625,
+            250.05312637653984,
+            250.058530571199,
+            250.06349455881713,
+            250.0697454003321,
+            250.07352360643617
+          ],
+          "sample": [
+            249.9045317410273,
+            250.05312637653984,
+            250.058530571199,
+            249.97771653480797,
+            250.02346325974045,
+            250.12294339362938,
+            249.8659672565861,
+            250.14083566603122,
+            250.02914277828873,
+            250.07352360643617,
+            250.06349455881713,
+            250.0697454003321,
+            250.0502990312625,
+            249.9361063621193
+          ]
+        },
+        "tg_throughput": {
+          "mean": 31.036635463699906,
+          "std": 0.020026620082479477,
+          "n": 10,
+          "median": 31.034373081042517,
+          "sd": 0.026617530471227398,
+          "n_all": 14,
+          "trimmed_low": [
+            30.990272184113316,
+            30.996095661166063
+          ],
+          "trimmed_high": [
+            31.069148930059917,
+            31.069661097802857
+          ],
+          "kept": [
+            31.005774337997156,
+            31.014594637254273,
+            31.01686063095618,
+            31.02723952113335,
+            31.033729657414746,
+            31.035016504670292,
+            31.04826845531732,
+            31.055569745540307,
+            31.061606787646824,
+            31.067694359068625
+          ],
+          "sample": [
+            31.01686063095618,
+            31.014594637254273,
+            31.005774337997156,
+            30.996095661166063,
+            31.02723952113335,
+            31.069148930059917,
+            31.067694359068625,
+            31.04826845531732,
+            31.055569745540307,
+            31.061606787646824,
+            31.069661097802857,
+            31.033729657414746,
+            30.990272184113316,
+            31.035016504670292
+          ]
+        },
+        "ttfr": {
+          "mean": 8401.320953853428,
+          "std": 1.2814085173335519,
+          "n": 10,
+          "median": 8401.167978998274,
+          "sd": 2.1139382839307874,
+          "n_all": 14,
+          "trimmed_low": [
+            8399.581999517977,
+            8399.70887452364
+          ],
+          "trimmed_high": [
+            8405.260625295341,
+            8406.557582318783
+          ],
+          "kept": [
+            8399.918790906668,
+            8400.085499510169,
+            8400.2669993788,
+            8400.361958891153,
+            8401.072583161294,
+            8401.263374835253,
+            8401.320000179112,
+            8401.920832693577,
+            8402.800457552075,
+            8404.199041426182
+          ],
+          "sample": [
+            8405.260625295341,
+            8400.2669993788,
+            8400.085499510169,
+            8402.800457552075,
+            8401.263374835253,
+            8401.920832693577,
+            8406.557582318783,
+            8401.320000179112,
+            8401.072583161294,
+            8399.581999517977,
+            8399.918790906668,
+            8399.70887452364,
+            8400.361958891153,
+            8404.199041426182
+          ]
+        }
+      }
+    },
+    {
+      "experiment_id": "qwen3.8-27b-mlx",
+      "server": "ollama",
+      "model": "Qwen3.8-27B-MLX-4bit",
+      "label": "Qwen3.8-27B-MLX-4bit-ollama",
+      "pp": 2048,
+      "tg": 64,
+      "status": "success",
+      "result_file": "results/qwen3.8-27b-mlx_Qwen3.8-27B-MLX-4bit-ollama_pp2048_tg64.json",
+      "metrics": {
+        "pp_throughput": {
+          "mean": 250.96940456482298,
+          "std": 0.2425782608909078,
+          "n": 10,
+          "median": 250.82714891392453,
+          "sd": 0.41882828324810817,
+          "n_all": 14,
+          "trimmed_low": [
+            249.81830276537053,
+            250.68845851587935
+          ],
+          "trimmed_high": [
+            251.41201209068885,
+            251.50091983973923
+          ],
+          "kept": [
+            250.7462245402201,
+            250.75124261664575,
+            250.75148828737625,
+            250.7731185931075,
+            250.8196393835764,
+            250.8346584442727,
+            251.16192435252628,
+            251.16506279077808,
+            251.28864036912583,
+            251.40204627060103
+          ],
+          "sample": [
+            249.81830276537053,
+            250.75148828737625,
+            251.16506279077808,
+            250.68845851587935,
+            250.7462245402201,
+            250.8346584442727,
+            251.40204627060103,
+            251.41201209068885,
+            251.16192435252628,
+            251.28864036912583,
+            250.75124261664575,
+            250.8196393835764,
+            250.7731185931075,
+            251.50091983973923
+          ]
+        },
+        "tg_throughput": {
+          "mean": 55.491905914342944,
+          "std": 2.7067375464848635,
+          "n": 10,
+          "median": 56.18965409589742,
+          "sd": 4.6977766100818785,
+          "n_all": 14,
+          "trimmed_low": [
+            49.81777795400562,
+            49.85260838825563
+          ],
+          "trimmed_high": [
+            63.03675309922544,
+            66.37282056511553
+          ],
+          "kept": [
+            51.032536372729226,
+            53.00036205956431,
+            53.14968478214738,
+            53.211891985212944,
+            56.133631280722796,
+            56.24567691107204,
+            56.382980402187414,
+            56.61504913495551,
+            59.318894300000764,
+            59.82835191483701
+          ],
+          "sample": [
+            63.03675309922544,
+            66.37282056511553,
+            56.382980402187414,
+            51.032536372729226,
+            53.211891985212944,
+            59.318894300000764,
+            53.00036205956431,
+            53.14968478214738,
+            59.82835191483701,
+            49.81777795400562,
+            56.133631280722796,
+            49.85260838825563,
+            56.24567691107204,
+            56.61504913495551
+          ]
+        },
+        "ttfr": {
+          "mean": 8204.394679144025,
+          "std": 8.935192748938535,
+          "n": 10,
+          "median": 8209.158562123775,
+          "sd": 14.93711260520164,
+          "n_all": 14,
+          "trimmed_low": [
+            8183.201625011861,
+            8186.093958094716
+          ],
+          "trimmed_high": [
+            8214.913999661803,
+            8242.292375303805
+          ],
+          "kept": [
+            8186.4182921126485,
+            8194.13841702044,
+            8198.069833219051,
+            8198.222249746323,
+            8208.912916481495,
+            8209.404207766056,
+            8211.634250357747,
+            8211.642291396856,
+            8211.80654130876,
+            8213.697792030871
+          ],
+          "sample": [
+            8242.292375303805,
+            8211.634250357747,
+            8194.13841702044,
+            8213.697792030871,
+            8211.80654130876,
+            8208.912916481495,
+            8186.4182921126485,
+            8186.093958094716,
+            8198.222249746323,
+            8198.069833219051,
+            8211.642291396856,
+            8209.404207766056,
+            8214.913999661803,
+            8183.201625011861
+          ]
+        }
+      }
+    },
+    {
+      "experiment_id": "qwen3.8-27b-mlx",
+      "server": "lm-studio",
+      "model": "Qwen3.8-27B-MLX-4bit",
+      "label": "Qwen3.8-27B-MLX-4bit-lmstudio",
+      "pp": 2048,
+      "tg": 64,
+      "status": "success",
+      "result_file": "results/qwen3.8-27b-mlx_Qwen3.8-27B-MLX-4bit-lmstudio_pp2048_tg64.json",
+      "metrics": {
+        "pp_throughput": {
+          "mean": 250.04804845029145,
+          "std": 0.06862190007032944,
+          "n": 10,
+          "median": 250.0819875518389,
+          "sd": 0.32925086015068333,
+          "n_all": 14,
+          "trimmed_low": [
+            249.09990335020652,
+            249.19967676861245
+          ],
+          "trimmed_high": [
+            250.12643212821283,
+            250.19591128796523
+          ],
+          "kept": [
+            249.91199816347458,
+            249.93396873922606,
+            250.0081021018886,
+            250.05755087881812,
+            250.07317161320807,
+            250.0908034904697,
+            250.0938551040138,
+            250.09878448789968,
+            250.10501601051413,
+            250.1072339134015
+          ],
+          "sample": [
+            249.91199816347458,
+            250.05755087881812,
+            250.1072339134015,
+            249.19967676861245,
+            250.19591128796523,
+            250.0938551040138,
+            249.93396873922606,
+            250.10501601051413,
+            250.0081021018886,
+            250.0908034904697,
+            250.12643212821283,
+            249.09990335020652,
+            250.07317161320807,
+            250.09878448789968
+          ]
+        },
+        "tg_throughput": {
+          "mean": 29.871962706385727,
+          "std": 0.005574488460061411,
+          "n": 10,
+          "median": 29.871806356316775,
+          "sd": 0.17635002783157674,
+          "n_all": 14,
+          "trimmed_low": [
+            29.854472685946504,
+            29.862431118569173
+          ],
+          "trimmed_high": [
+            30.354647547370828,
+            30.391176711702506
+          ],
+          "kept": [
+            29.863762824099155,
+            29.86399958567218,
+            29.868442766530404,
+            29.869760627871873,
+            29.870356040161276,
+            29.87325667247227,
+            29.874404028138834,
+            29.875853782088534,
+            29.877481841086958,
+            29.882308895735807
+          ],
+          "sample": [
+            29.869760627871873,
+            29.854472685946504,
+            29.877481841086958,
+            30.391176711702506,
+            29.875853782088534,
+            29.874404028138834,
+            29.870356040161276,
+            29.862431118569173,
+            29.86399958567218,
+            29.87325667247227,
+            29.882308895735807,
+            30.354647547370828,
+            29.868442766530404,
+            29.863762824099155
+          ]
+        },
+        "ttfr": {
+          "mean": 8400.827745720744,
+          "std": 2.2367516190866397,
+          "n": 10,
+          "median": 8399.819917045534,
+          "sd": 11.589128880180118,
+          "n_all": 14,
+          "trimmed_low": [
+            8398.0931667611,
+            8398.737624287605
+          ],
+          "trimmed_high": [
+            8432.691667228937,
+            8433.32920782268
+          ],
+          "kept": [
+            8398.812082596123,
+            8399.021291173995,
+            8399.186790920794,
+            8399.289249442518,
+            8399.758541956544,
+            8399.881292134523,
+            8400.405874475837,
+            8402.066917158663,
+            8404.55837547779,
+            8405.297041870654
+          ],
+          "sample": [
+            8405.297041870654,
+            8400.405874475837,
+            8398.737624287605,
+            8433.32920782268,
+            8399.758541956544,
+            8399.186790920794,
+            8404.55837547779,
+            8398.812082596123,
+            8402.066917158663,
+            8399.289249442518,
+            8398.0931667611,
+            8432.691667228937,
+            8399.881292134523,
+            8399.021291173995
+          ]
+        }
+      }
+    },
+    {
+      "experiment_id": "qwen3.8-27b-mlx",
+      "server": "ollama",
+      "model": "Qwen3.8-27B-MLX-4bit",
+      "label": "Qwen3.8-27B-MLX-4bit-ollama",
+      "pp": 4096,
+      "tg": 32,
+      "status": "success",
+      "result_file": "results/qwen3.8-27b-mlx_Qwen3.8-27B-MLX-4bit-ollama_pp4096_tg32.json",
+      "metrics": {
+        "pp_throughput": {
+          "mean": 250.13150633954905,
+          "std": 0.0798330671281415,
+          "n": 10,
+          "median": 250.12657246462913,
+          "sd": 0.17781625240963594,
+          "n_all": 14,
+          "trimmed_low": [
+            249.68565730002868,
+            249.85684629638894
+          ],
+          "trimmed_high": [
+            250.35802974667894,
+            250.37228562305376
+          ],
+          "kept": [
+            249.97855372566045,
+            250.0431002699414,
+            250.08236536675687,
+            250.11653503269613,
+            250.1244047585095,
+            250.12874017074876,
+            250.1761848055372,
+            250.1924756602368,
+            250.20373719111836,
+            250.26896641428527
+          ],
+          "sample": [
+            249.68565730002868,
+            250.1761848055372,
+            250.20373719111836,
+            250.12874017074876,
+            249.97855372566045,
+            250.08236536675687,
+            250.26896641428527,
+            250.1924756602368,
+            249.85684629638894,
+            250.37228562305376,
+            250.0431002699414,
+            250.1244047585095,
+            250.35802974667894,
+            250.11653503269613
+          ]
+        },
+        "tg_throughput": {
+          "mean": 57.786066732300625,
+          "std": 3.4867858828378746,
+          "n": 10,
+          "median": 58.63811121413275,
+          "sd": 5.571457608026536,
+          "n_all": 14,
+          "trimmed_low": [
+            45.03096335503716,
+            48.72887068347615
+          ],
+          "trimmed_high": [
+            62.61933657697492,
+            64.97998197021028
+          ],
+          "kept": [
+            51.68989840606108,
+            52.528873345044225,
+            55.522044162881706,
+            56.47656388038997,
+            58.51376913721356,
+            58.76245329105195,
+            59.26995185244509,
+            61.4548798754986,
+            61.48453924496335,
+            62.15769412745675
+          ],
+          "sample": [
+            55.522044162881706,
+            56.47656388038997,
+            59.26995185244509,
+            48.72887068347615,
+            62.15769412745675,
+            62.61933657697492,
+            58.51376913721356,
+            52.528873345044225,
+            51.68989840606108,
+            64.97998197021028,
+            58.76245329105195,
+            61.4548798754986,
+            61.48453924496335,
+            45.03096335503716
+          ]
+        },
+        "ttfr": {
+          "mean": 16420.043720770627,
+          "std": 5.741127027969248,
+          "n": 10,
+          "median": 16419.824437703937,
+          "sd": 12.253238335424507,
+          "n_all": 14,
+          "trimmed_low": [
+            16399.46191571653,
+            16404.389792121947
+          ],
+          "trimmed_high": [
+            16437.287291511893,
+            16448.55433423072
+          ],
+          "kept": [
+            16410.226250067353,
+            16414.503457956016,
+            16415.24212434888,
+            16416.31079185754,
+            16419.423916377127,
+            16420.224959030747,
+            16423.706457950175,
+            16425.046250224113,
+            16426.466667093337,
+            16429.286332800984
+          ],
+          "sample": [
+            16448.55433423072,
+            16416.31079185754,
+            16414.503457956016,
+            16419.423916377127,
+            16429.286332800984,
+            16426.466667093337,
+            16410.226250067353,
+            16415.24212434888,
+            16437.287291511893,
+            16399.46191571653,
+            16425.046250224113,
+            16423.706457950175,
+            16404.389792121947,
+            16420.224959030747
+          ]
+        }
+      }
+    },
+    {
+      "experiment_id": "qwen3.8-27b-mlx",
+      "server": "lm-studio",
+      "model": "Qwen3.8-27B-MLX-4bit",
+      "label": "Qwen3.8-27B-MLX-4bit-lmstudio",
+      "pp": 4096,
+      "tg": 32,
+      "status": "success",
+      "result_file": "results/qwen3.8-27b-mlx_Qwen3.8-27B-MLX-4bit-lmstudio_pp4096_tg32.json",
+      "metrics": {
+        "pp_throughput": {
+          "mean": 250.95560512232132,
+          "std": 0.043313088612061325,
+          "n": 10,
+          "median": 250.97055386277168,
+          "sd": 0.12549936297445782,
+          "n_all": 14,
+          "trimmed_low": [
+            250.5116884645105,
+            250.87204254419348
+          ],
+          "trimmed_high": [
+            251.0178537909209,
+            251.02600689115042
+          ],
+          "kept": [
+            250.88423488200058,
+            250.90227104715387,
+            250.91733772803246,
+            250.91995031954983,
+            250.96019670631313,
+            250.98091101923026,
+            250.98287315506073,
+            251.00063281744204,
+            251.00238264106352,
+            251.00526090736662
+          ],
+          "sample": [
+            251.02600689115042,
+            250.5116884645105,
+            250.87204254419348,
+            250.88423488200058,
+            250.98091101923026,
+            251.00063281744204,
+            250.91995031954983,
+            251.0178537909209,
+            251.00238264106352,
+            250.91733772803246,
+            251.00526090736662,
+            250.96019670631313,
+            250.98287315506073,
+            250.90227104715387
+          ]
+        },
+        "tg_throughput": {
+          "mean": 30.29540799585891,
+          "std": 0.02080053862188302,
+          "n": 10,
+          "median": 30.291967299041154,
+          "sd": 0.2865772015254237,
+          "n_all": 14,
+          "trimmed_low": [
+            30.24962115471013,
+            30.256516033969255
+          ],
+          "trimmed_high": [
+            30.505130655442503,
+            31.39295922948651
+          ],
+          "kept": [
+            30.265869258582192,
+            30.27466052211331,
+            30.287984495954202,
+            30.28957337553186,
+            30.290915234120604,
+            30.293019363961708,
+            30.294166425124985,
+            30.29869720140685,
+            30.312887076577606,
+            30.346307005215763
+          ],
+          "sample": [
+            30.28957337553186,
+            31.39295922948651,
+            30.505130655442503,
+            30.29869720140685,
+            30.27466052211331,
+            30.294166425124985,
+            30.265869258582192,
+            30.256516033969255,
+            30.293019363961708,
+            30.290915234120604,
+            30.312887076577606,
+            30.24962115471013,
+            30.287984495954202,
+            30.346307005215763
+          ]
+        },
+        "ttfr": {
+          "mean": 16530.631554406136,
+          "std": 3.2466885465514124,
+          "n": 10,
+          "median": 16529.199187643826,
+          "sd": 8.581560459969793,
+          "n_all": 14,
+          "trimmed_low": [
+            16526.29475016147,
+            16526.643250137568
+          ],
+          "trimmed_high": [
+            16539.618292823434,
+            16560.220083221793
+          ],
+          "kept": [
+            16526.831458322704,
+            16527.660500258207,
+            16527.850000187755,
+            16527.965207584202,
+            16529.134584590793,
+            16529.26379069686,
+            16533.279042690992,
+            16533.451167866588,
+            16534.44387484342,
+            16536.435917019844
+          ],
+          "sample": [
+            16526.29475016147,
+            16560.220083221793,
+            16536.435917019844,
+            16539.618292823434,
+            16529.26379069686,
+            16527.965207584202,
+            16533.279042690992,
+            16526.831458322704,
+            16527.850000187755,
+            16533.451167866588,
+            16527.660500258207,
+            16526.643250137568,
+            16529.134584590793,
+            16534.44387484342
+          ]
+        }
+      }
+    },
+    {
+      "experiment_id": "qwen3.8-27b-mlx",
+      "server": "ollama",
+      "model": "Qwen3.8-27B-MLX-4bit",
+      "label": "Qwen3.8-27B-MLX-4bit-ollama",
+      "pp": 4096,
+      "tg": 64,
+      "status": "success",
+      "result_file": "results/qwen3.8-27b-mlx_Qwen3.8-27B-MLX-4bit-ollama_pp4096_tg64.json",
+      "metrics": {
+        "pp_throughput": {
+          "mean": 250.23948557858262,
+          "std": 0.08778608687674376,
+          "n": 10,
+          "median": 250.23790098886604,
+          "sd": 0.15132941002853925,
+          "n_all": 14,
+          "trimmed_low": [
+            249.8799967726914,
+            250.02644042992125
+          ],
+          "trimmed_high": [
+            250.40092208827085,
+            250.45313660223002
+          ],
+          "kept": [
+            250.06693747702084,
+            250.17375400346532,
+            250.17656504748115,
+            250.2038907099596,
+            250.23650969649228,
+            250.2392922812398,
+            250.27315425025273,
+            250.2848196910515,
+            250.35421201396838,
+            250.38572061489467
+          ],
+          "sample": [
+            250.02644042992125,
+            249.8799967726914,
+            250.23650969649228,
+            250.17375400346532,
+            250.2392922812398,
+            250.45313660223002,
+            250.38572061489467,
+            250.40092208827085,
+            250.2848196910515,
+            250.17656504748115,
+            250.35421201396838,
+            250.27315425025273,
+            250.06693747702084,
+            250.2038907099596
+          ]
+        },
+        "tg_throughput": {
+          "mean": 55.244879225934525,
+          "std": 2.303650133551817,
+          "n": 10,
+          "median": 54.97235769154308,
+          "sd": 4.48801243809903,
+          "n_all": 14,
+          "trimmed_low": [
+            47.042921463243516,
+            48.59186434661392
+          ],
+          "trimmed_high": [
+            62.25429730340239,
+            63.507402965190344
+          ],
+          "kept": [
+            52.232260695266156,
+            52.908034831834556,
+            53.34231029859369,
+            54.747903302923454,
+            54.965960024312785,
+            54.97875535877337,
+            55.7904572810924,
+            56.04370576482509,
+            56.54813781498428,
+            60.89126688673951
+          ],
+          "sample": [
+            54.747903302923454,
+            63.507402965190344,
+            47.042921463243516,
+            56.04370576482509,
+            54.97875535877337,
+            53.34231029859369,
+            56.54813781498428,
+            60.89126688673951,
+            52.232260695266156,
+            62.25429730340239,
+            54.965960024312785,
+            52.908034831834556,
+            48.59186434661392,
+            55.7904572810924
+          ]
+        },
+        "ttfr": {
+          "mean": 16412.57988763973,
+          "std": 5.756446406773329,
+          "n": 10,
+          "median": 16412.681771442294,
+          "sd": 10.99760176523961,
+          "n_all": 14,
+          "trimmed_low": [
+            16401.99925005436,
+            16402.573416940868
+          ],
+          "trimmed_high": [
+            16426.559208892286,
+            16444.187415763736
+          ],
+          "kept": [
+            16402.994791045785,
+            16405.058667063713,
+            16409.605834633112,
+            16410.370499826968,
+            16412.590542808175,
+            16412.773000076413,
+            16414.91216700524,
+            16416.70462489128,
+            16416.889040730894,
+            16423.89970831573
+          ],
+          "sample": [
+            16426.559208892286,
+            16444.187415763736,
+            16412.773000076413,
+            16416.889040730894,
+            16412.590542808175,
+            16402.573416940868,
+            16402.994791045785,
+            16401.99925005436,
+            16409.605834633112,
+            16416.70462489128,
+            16405.058667063713,
+            16410.370499826968,
+            16423.89970831573,
+            16414.91216700524
+          ]
+        }
+      }
+    },
+    {
+      "experiment_id": "qwen3.8-27b-mlx",
+      "server": "lm-studio",
+      "model": "Qwen3.8-27B-MLX-4bit",
+      "label": "Qwen3.8-27B-MLX-4bit-lmstudio",
+      "pp": 4096,
+      "tg": 64,
+      "status": "success",
+      "result_file": "results/qwen3.8-27b-mlx_Qwen3.8-27B-MLX-4bit-lmstudio_pp4096_tg64.json",
+      "metrics": {
+        "pp_throughput": {
+          "mean": 250.99377891737336,
+          "std": 0.024188370354778218,
+          "n": 10,
+          "median": 250.99284334832862,
+          "sd": 0.032547481745933214,
+          "n_all": 14,
+          "trimmed_low": [
+            250.92835240542294,
+            250.95733122614362
+          ],
+          "trimmed_high": [
+            251.03497628668222,
+            251.03501808323037
+          ],
+          "kept": [
+            250.95905817763972,
+            250.9648786024428,
+            250.9731131830748,
+            250.9774573081389,
+            250.98518319513957,
+            251.0005035015177,
+            251.00847130587596,
+            251.0113914863546,
+            251.02672891437336,
+            251.0310034991762
+          ],
+          "sample": [
+            251.0005035015177,
+            250.9731131830748,
+            250.9648786024428,
+            251.03501808323037,
+            251.0113914863546,
+            250.95905817763972,
+            250.95733122614362,
+            251.02672891437336,
+            250.9774573081389,
+            250.98518319513957,
+            251.0310034991762,
+            251.03497628668222,
+            250.92835240542294,
+            251.00847130587596
+          ]
+        },
+        "tg_throughput": {
+          "mean": 29.17110643082189,
+          "std": 0.010893630079010007,
+          "n": 10,
+          "median": 29.166288993452223,
+          "sd": 0.014910567276352643,
+          "n_all": 14,
+          "trimmed_low": [
+            29.142153127688893,
+            29.149309712949723
+          ],
+          "trimmed_high": [
+            29.18823915840731,
+            29.189426684268966
+          ],
+          "kept": [
+            29.15797813861572,
+            29.158830637317408,
+            29.162754950374993,
+            29.16391867118855,
+            29.16569242888438,
+            29.166885558020066,
+            29.17845700349886,
+            29.182162826762767,
+            29.18636821095782,
+            29.18801588259832
+          ],
+          "sample": [
+            29.16569242888438,
+            29.142153127688893,
+            29.182162826762767,
+            29.17845700349886,
+            29.158830637317408,
+            29.162754950374993,
+            29.18636821095782,
+            29.18801588259832,
+            29.149309712949723,
+            29.15797813861572,
+            29.166885558020066,
+            29.16391867118855,
+            29.18823915840731,
+            29.189426684268966
+          ]
+        },
+        "ttfr": {
+          "mean": 16527.72765411064,
+          "std": 1.4666625395109953,
+          "n": 10,
+          "median": 16527.449583169073,
+          "sd": 2.121468254983443,
+          "n_all": 14,
+          "trimmed_low": [
+            16525.798165239394,
+            16525.80091636628
+          ],
+          "trimmed_high": [
+            16530.799500644207,
+            16532.8220827505
+          ],
+          "kept": [
+            16525.88937524706,
+            16526.06241684407,
+            16526.343791745603,
+            16526.928500272334,
+            16527.353458106518,
+            16527.545708231628,
+            16528.070291504264,
+            16529.079041443765,
+            16529.58779130131,
+            16530.41616640985
+          ],
+          "sample": [
+            16528.070291504264,
+            16525.88937524706,
+            16530.41616640985,
+            16525.798165239394,
+            16527.353458106518,
+            16530.799500644207,
+            16526.928500272334,
+            16526.343791745603,
+            16529.58779130131,
+            16529.079041443765,
+            16526.06241684407,
+            16525.80091636628,
+            16532.8220827505,
+            16527.545708231628
+          ]
+        }
+      }
+    },
+    {
+      "experiment_id": "qwen3.8-27b-mlx",
+      "server": "ollama",
+      "model": "Qwen3.8-27B-MLX-4bit",
+      "label": "Qwen3.8-27B-MLX-4bit-ollama",
+      "pp": 8192,
+      "tg": 32,
+      "status": "success",
+      "result_file": "results/qwen3.8-27b-mlx_Qwen3.8-27B-MLX-4bit-ollama_pp8192_tg32.json",
+      "metrics": {
+        "pp_throughput": {
+          "mean": 246.69976270119827,
+          "std": 0.0519946047417345,
+          "n": 10,
+          "median": 246.70778058734336,
+          "sd": 0.10214022420427159,
+          "n_all": 14,
+          "trimmed_low": [
+            246.4511230680135,
+            246.54395180538938
+          ],
+          "trimmed_high": [
+            246.81917855262455,
+            246.84163411605877
+          ],
+          "kept": [
+            246.59441925805928,
+            246.64150409960448,
+            246.67905640468405,
+            246.6935632402324,
+            246.7069127429691,
+            246.70864843171762,
+            246.710723819999,
+            246.7157076488902,
+            246.75505817428038,
+            246.79203319154607
+          ],
+          "sample": [
+            246.70864843171762,
+            246.7157076488902,
+            246.84163411605877,
+            246.710723819999,
+            246.4511230680135,
+            246.59441925805928,
+            246.67905640468405,
+            246.79203319154607,
+            246.7069127429691,
+            246.75505817428038,
+            246.81917855262455,
+            246.6935632402324,
+            246.64150409960448,
+            246.54395180538938
+          ]
+        },
+        "tg_throughput": {
+          "mean": 54.39309879538398,
+          "std": 2.988664245814244,
+          "n": 10,
+          "median": 53.468188001257936,
+          "sd": 7.056336629870576,
+          "n_all": 14,
+          "trimmed_low": [
+            41.32200422551614,
+            50.531930056763564
+          ],
+          "trimmed_high": [
+            65.81937772748987,
+            71.75644921286307
+          ],
+          "kept": [
+            50.7522934966252,
+            51.78261659651671,
+            52.35747629840853,
+            52.981717059029435,
+            53.187321679003404,
+            53.74905432351247,
+            55.00541512223089,
+            55.66584815708312,
+            56.71817660711573,
+            61.73106861431429
+          ],
+          "sample": [
+            61.73106861431429,
+            52.981717059029435,
+            53.74905432351247,
+            71.75644921286307,
+            55.66584815708312,
+            56.71817660711573,
+            55.00541512223089,
+            52.35747629840853,
+            50.7522934966252,
+            53.187321679003404,
+            51.78261659651671,
+            65.81937772748987,
+            50.531930056763564,
+            41.32200422551614
+          ]
+        },
+        "ttfr": {
+          "mean": 33250.80824578181,
+          "std": 8.582134649056593,
+          "n": 10,
+          "median": 33250.625520944595,
+          "sd": 15.222698705578676,
+          "n_all": 14,
+          "trimmed_low": [
+            33226.61791741848,
+            33231.69795796275
+          ],
+          "trimmed_high": [
+            33271.81787509471,
+            33284.34862475842
+          ],
+          "kept": [
+            33238.376166671515,
+            33239.30358327925,
+            33245.27604132891,
+            33248.65779094398,
+            33249.60904195905,
+            33251.64199993014,
+            33253.59725020826,
+            33253.8963323459,
+            33258.65966733545,
+            33269.064583815634
+          ],
+          "sample": [
+            33249.60904195905,
+            33248.65779094398,
+            33231.69795796275,
+            33245.27604132891,
+            33284.34862475842,
+            33269.064583815634,
+            33253.59725020826,
+            33238.376166671515,
+            33253.8963323459,
+            33239.30358327925,
+            33226.61791741848,
+            33251.64199993014,
+            33258.65966733545,
+            33271.81787509471
+          ]
+        }
+      }
+    },
+    {
+      "experiment_id": "qwen3.8-27b-mlx",
+      "server": "lm-studio",
+      "model": "Qwen3.8-27B-MLX-4bit",
+      "label": "Qwen3.8-27B-MLX-4bit-lmstudio",
+      "pp": 8192,
+      "tg": 32,
+      "status": "success",
+      "result_file": "results/qwen3.8-27b-mlx_Qwen3.8-27B-MLX-4bit-lmstudio_pp8192_tg32.json",
+      "metrics": {
+        "pp_throughput": {
+          "mean": 248.51356043445935,
+          "std": 0.024017712044677737,
+          "n": 10,
+          "median": 248.51537135931596,
+          "sd": 0.04001115508976436,
+          "n_all": 14,
+          "trimmed_low": [
+            248.41098970696393,
+            248.4667152011748
+          ],
+          "trimmed_high": [
+            248.55353859078676,
+            248.5643192019384
+          ],
+          "kept": [
+            248.4780278102755,
+            248.48672157689137,
+            248.48937716172762,
+            248.49734002569753,
+            248.50151099621698,
+            248.52923172241492,
+            248.53260680213995,
+            248.53540648998137,
+            248.54048602606792,
+            248.5448957331804
+          ],
+          "sample": [
+            248.41098970696393,
+            248.53540648998137,
+            248.54048602606792,
+            248.49734002569753,
+            248.5448957331804,
+            248.4780278102755,
+            248.5643192019384,
+            248.48937716172762,
+            248.53260680213995,
+            248.52923172241492,
+            248.50151099621698,
+            248.55353859078676,
+            248.48672157689137,
+            248.4667152011748
+          ]
+        },
+        "tg_throughput": {
+          "mean": 29.602217406996953,
+          "std": 0.018039385935001127,
+          "n": 10,
+          "median": 29.60255668208392,
+          "sd": 0.0715321590284142,
+          "n_all": 14,
+          "trimmed_low": [
+            29.536422166050933,
+            29.551860803814424
+          ],
+          "trimmed_high": [
+            29.642333119799243,
+            29.851309349977235
+          ],
+          "kept": [
+            29.567643438937278,
+            29.580749553608282,
+            29.594352666019326,
+            29.5948878952683,
+            29.595193244274537,
+            29.609920119893307,
+            29.611637228457944,
+            29.61916176601548,
+            29.62104683464458,
+            29.627581322850524
+          ],
+          "sample": [
+            29.627581322850524,
+            29.536422166050933,
+            29.5948878952683,
+            29.609920119893307,
+            29.61916176601548,
+            29.642333119799243,
+            29.611637228457944,
+            29.594352666019326,
+            29.551860803814424,
+            29.580749553608282,
+            29.567643438937278,
+            29.595193244274537,
+            29.851309349977235,
+            29.62104683464458
+          ]
+        },
+        "ttfr": {
+          "mean": 33174.577599857,
+          "std": 3.32207924416081,
+          "n": 10,
+          "median": 33173.815249465406,
+          "sd": 5.5468273255435045,
+          "n_all": 14,
+          "trimmed_low": [
+            33168.4848330915,
+            33168.69320906699
+          ],
+          "trimmed_high": [
+            33181.51345849037,
+            33188.95654194057
+          ],
+          "kept": [
+            33169.92337536067,
+            33171.07675038278,
+            33171.66524939239,
+            33172.34316654503,
+            33173.16729109734,
+            33174.46320783347,
+            33176.86758376658,
+            33177.42441594601,
+            33178.84208261967,
+            33180.00287562609
+          ],
+          "sample": [
+            33188.95654194057,
+            33172.34316654503,
+            33171.66524939239,
+            33177.42441594601,
+            33171.07675038278,
+            33180.00287562609,
+            33168.4848330915,
+            33174.46320783347,
+            33168.69320906699,
+            33173.16729109734,
+            33176.86758376658,
+            33169.92337536067,
+            33178.84208261967,
+            33181.51345849037
+          ]
+        }
+      }
+    },
+    {
+      "experiment_id": "qwen3.8-27b-mlx",
+      "server": "ollama",
+      "model": "Qwen3.8-27B-MLX-4bit",
+      "label": "Qwen3.8-27B-MLX-4bit-ollama",
+      "pp": 8192,
+      "tg": 64,
+      "status": "success",
+      "result_file": "results/qwen3.8-27b-mlx_Qwen3.8-27B-MLX-4bit-ollama_pp8192_tg64.json",
+      "metrics": {
+        "pp_throughput": {
+          "mean": 246.56520414914044,
+          "std": 0.09415946856241644,
+          "n": 10,
+          "median": 246.54456911756813,
+          "sd": 0.1421957758340635,
+          "n_all": 14,
+          "trimmed_low": [
+            246.30189093191757,
+            246.44568596429102
+          ],
+          "trimmed_high": [
+            246.76101225560478,
+            246.83529392058267
+          ],
+          "kept": [
+            246.44908389412396,
+            246.45809174687383,
+            246.48473170943822,
+            246.5011044783728,
+            246.50199008856498,
+            246.58714814657128,
+            246.62869184813385,
+            246.64659434651256,
+            246.6580223747219,
+            246.73658285809077
+          ],
+          "sample": [
+            246.44568596429102,
+            246.62869184813385,
+            246.73658285809077,
+            246.83529392058267,
+            246.64659434651256,
+            246.6580223747219,
+            246.76101225560478,
+            246.58714814657128,
+            246.45809174687383,
+            246.44908389412396,
+            246.5011044783728,
+            246.48473170943822,
+            246.30189093191757,
+            246.50199008856498
+          ]
+        },
+        "tg_throughput": {
+          "mean": 52.34448241428355,
+          "std": 2.8675623264703094,
+          "n": 10,
+          "median": 51.78353002643358,
+          "sd": 4.3790170132880135,
+          "n_all": 14,
+          "trimmed_low": [
+            47.37467387282499,
+            47.54204934689805
+          ],
+          "trimmed_high": [
+            60.590859458357784,
+            60.94950625367982
+          ],
+          "kept": [
+            48.22910814056621,
+            49.76553094574547,
+            49.99916504777604,
+            50.03406255788697,
+            50.66552449512484,
+            52.90153555774232,
+            53.47092239236857,
+            55.55261420732527,
+            56.36576573481543,
+            56.46059506348441
+          ],
+          "sample": [
+            56.36576573481543,
+            52.90153555774232,
+            55.55261420732527,
+            53.47092239236857,
+            50.03406255788697,
+            60.590859458357784,
+            50.66552449512484,
+            47.54204934689805,
+            56.46059506348441,
+            49.99916504777604,
+            47.37467387282499,
+            49.76553094574547,
+            60.94950625367982,
+            48.22910814056621
+          ]
+        },
+        "ttfr": {
+          "mean": 33268.55316227302,
+          "std": 12.251586666597365,
+          "n": 10,
+          "median": 33271.739249583334,
+          "sd": 18.96031778267753,
+          "n_all": 14,
+          "trimmed_low": [
+            33232.555124908686,
+            33242.557832971215
+          ],
+          "trimmed_high": [
+            33285.08654050529,
+            33304.5166246593
+          ],
+          "kept": [
+            33245.84879167378,
+            33256.436333060265,
+            33257.97704234719,
+            33260.39091683924,
+            33265.993791632354,
+            33277.48470753431,
+            33277.604250237346,
+            33279.81445752084,
+            33280.57004138827,
+            33283.41129049659
+          ],
+          "sample": [
+            33285.08654050529,
+            33260.39091683924,
+            33245.84879167378,
+            33232.555124908686,
+            33257.97704234719,
+            33256.436333060265,
+            33242.557832971215,
+            33265.993791632354,
+            33283.41129049659,
+            33280.57004138827,
+            33277.604250237346,
+            33279.81445752084,
+            33304.5166246593,
+            33277.48470753431
+          ]
+        }
+      }
+    },
+    {
+      "experiment_id": "qwen3.8-27b-mlx",
+      "server": "lm-studio",
+      "model": "Qwen3.8-27B-MLX-4bit",
+      "label": "Qwen3.8-27B-MLX-4bit-lmstudio",
+      "pp": 8192,
+      "tg": 64,
+      "status": "success",
+      "result_file": "results/qwen3.8-27b-mlx_Qwen3.8-27B-MLX-4bit-lmstudio_pp8192_tg64.json",
+      "metrics": {
+        "pp_throughput": {
+          "mean": 248.52939852672085,
+          "std": 0.02293118325962204,
+          "n": 10,
+          "median": 248.51877884770607,
+          "sd": 0.06401982654800929,
+          "n_all": 14,
+          "trimmed_low": [
+            248.3101500610646,
+            248.49999998157008
+          ],
+          "trimmed_high": [
+            248.57628701092997,
+            248.58048659603654
+          ],
+          "kept": [
+            248.50566390286124,
+            248.5123359927722,
+            248.51321966008743,
+            248.51388577233854,
+            248.5180985123449,
+            248.51945918306723,
+            248.5222427097851,
+            248.5513606196561,
+            248.56517314675062,
+            248.57254576754502
+          ],
+          "sample": [
+            248.57254576754502,
+            248.5180985123449,
+            248.5513606196561,
+            248.3101500610646,
+            248.5123359927722,
+            248.58048659603654,
+            248.49999998157008,
+            248.51321966008743,
+            248.51388577233854,
+            248.50566390286124,
+            248.57628701092997,
+            248.5222427097851,
+            248.56517314675062,
+            248.51945918306723
+          ]
+        },
+        "tg_throughput": {
+          "mean": 28.530030485136603,
+          "std": 0.014066695975733847,
+          "n": 10,
+          "median": 28.52718328523004,
+          "sd": 0.11918502434708358,
+          "n_all": 14,
+          "trimmed_low": [
+            28.505143713724703,
+            28.509732468320585
+          ],
+          "trimmed_high": [
+            28.5620225284585,
+            28.98709787892811
+          ],
+          "kept": [
+            28.51365556228551,
+            28.514476821559523,
+            28.51920743330471,
+            28.521828077292604,
+            28.524148483328144,
+            28.53021808713194,
+            28.534284131966533,
+            28.53828185957551,
+            28.542378153518463,
+            28.561826241403082
+          ],
+          "sample": [
+            28.53021808713194,
+            28.53828185957551,
+            28.51920743330471,
+            28.98709787892811,
+            28.561826241403082,
+            28.524148483328144,
+            28.521828077292604,
+            28.505143713724703,
+            28.51365556228551,
+            28.542378153518463,
+            28.509732468320585,
+            28.5620225284585,
+            28.514476821559523,
+            28.534284131966533
+          ]
+        },
+        "ttfr": {
+          "mean": 33173.67554586381,
+          "std": 2.5348182881432013,
+          "n": 10,
+          "median": 33174.74035406485,
+          "sd": 9.310961080090257,
+          "n_all": 14,
+          "trimmed_low": [
+            33166.50558449328,
+            33167.565042153
+          ],
+          "trimmed_high": [
+            33177.24716570228,
+            33206.63895923644
+          ],
+          "kept": [
+            33168.548750691116,
+            33170.39187531918,
+            33171.088790521026,
+            33174.27800036967,
+            33174.649542197585,
+            33174.83116593212,
+            33175.393499433994,
+            33175.48241652548,
+            33175.600375048816,
+            33176.49104259908
+          ],
+          "sample": [
+            33167.565042153,
+            33174.83116593212,
+            33170.39187531918,
+            33206.63895923644,
+            33175.600375048816,
+            33166.50558449328,
+            33177.24716570228,
+            33175.48241652548,
+            33175.393499433994,
+            33176.49104259908,
+            33171.088790521026,
+            33174.27800036967,
+            33168.548750691116,
+            33174.649542197585
+          ]
+        }
+      }
+    }
+  ],
+  "summary": {
+    "total_runs": 16,
+    "successful": 16,
+    "failed": 0
+  }
+}

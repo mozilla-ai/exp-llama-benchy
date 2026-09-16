@@ -1,0 +1,4915 @@
+{
+  "experiment_id": "qwen3.5-9b-all-servers",
+  "generated_at": "2026-09-12T22:42:02.473932+00:00",
+  "config": {
+    "vars": {
+      "lms_models": "/Users/mala/.lmstudio/models/lmstudio-community"
+    },
+    "x-stop-8080": "pids=$(lsof -ti tcp:8080 -sTCP:LISTEN)\n[ -n \"$pids\" ] && kill -TERM $pids\nsleep 2\npids=$(lsof -ti tcp:8080 -sTCP:LISTEN)\n[ -n \"$pids\" ] && kill -KILL $pids\ntrue\n",
+    "x-ready-8080": {
+      "path": "/models",
+      "timeout_s": 60
+    },
+    "x-ollama-start": "mkdir -p logs\nOLLAMA_CONTEXT_LENGTH=16384 ollama serve >>logs/ollama-serve.log 2>&1 &\necho $! > /tmp/benchy-ollama.pid\nuntil curl -sf http://127.0.0.1:11434/v1/models >/dev/null; do sleep 0.5; done\nollama run {model} '' </dev/null >/dev/null 2>&1\n",
+    "x-ollama-stop": "kill \"$(cat /tmp/benchy-ollama.pid 2>/dev/null)\" 2>/dev/null || true\nrm -f /tmp/benchy-ollama.pid\nkillall Ollama 2>/dev/null || true\n",
+    "x-ready-ollama": {
+      "path": "/models",
+      "timeout_s": 120
+    },
+    "servers": {
+      "llamafile": {
+        "base_url": "http://127.0.0.1:8080/v1",
+        "label_suffix": "-llamafile",
+        "model_template": "{vars.lms_models}/{served_model_name}.gguf",
+        "start_cmd": "/Users/mala/llamafile-42ff11b/llamafile-0.10.6-42ff11b -m {model} --server --ctx-size 16384\n",
+        "foreground": true,
+        "stop_cmd": "pids=$(lsof -ti tcp:8080 -sTCP:LISTEN)\n[ -n \"$pids\" ] && kill -TERM $pids\nsleep 2\npids=$(lsof -ti tcp:8080 -sTCP:LISTEN)\n[ -n \"$pids\" ] && kill -KILL $pids\ntrue\n",
+        "ready_check": {
+          "path": "/models",
+          "timeout_s": 60
+        }
+      },
+      "llama-cpp": {
+        "base_url": "http://127.0.0.1:8080/v1",
+        "label_suffix": "-llamacpp",
+        "model_template": "{vars.lms_models}/{served_model_name}.gguf",
+        "start_cmd": "/Users/mala/workspace/llama.cpp/build/bin/llama-server -m {model} --ctx-size 16384\n",
+        "foreground": true,
+        "stop_cmd": "pids=$(lsof -ti tcp:8080 -sTCP:LISTEN)\n[ -n \"$pids\" ] && kill -TERM $pids\nsleep 2\npids=$(lsof -ti tcp:8080 -sTCP:LISTEN)\n[ -n \"$pids\" ] && kill -KILL $pids\ntrue\n",
+        "ready_check": {
+          "path": "/models",
+          "timeout_s": 60
+        }
+      },
+      "llamafile-mtp": {
+        "base_url": "http://127.0.0.1:8080/v1",
+        "label_suffix": "-llamafile-mtp",
+        "model_template": "{vars.lms_models}/{served_model_name}.gguf",
+        "start_cmd": "/Users/mala/llamafile-42ff11b/llamafile-0.10.6-42ff11b -m {model} --server --ctx-size 16384 --spec-type draft-mtp --spec-draft-n-max 2 --spec-draft-backend-sampling\n",
+        "foreground": true,
+        "stop_cmd": "pids=$(lsof -ti tcp:8080 -sTCP:LISTEN)\n[ -n \"$pids\" ] && kill -TERM $pids\nsleep 2\npids=$(lsof -ti tcp:8080 -sTCP:LISTEN)\n[ -n \"$pids\" ] && kill -KILL $pids\ntrue\n",
+        "ready_check": {
+          "path": "/models",
+          "timeout_s": 60
+        }
+      },
+      "llama-cpp-mtp": {
+        "base_url": "http://127.0.0.1:8080/v1",
+        "label_suffix": "-llamacpp-mtp",
+        "model_template": "{vars.lms_models}/{served_model_name}.gguf",
+        "start_cmd": "/Users/mala/workspace/llama.cpp/build/bin/llama-server -m {model} --ctx-size 16384 --spec-type draft-mtp --spec-draft-n-max 2 --spec-draft-backend-sampling\n",
+        "foreground": true,
+        "stop_cmd": "pids=$(lsof -ti tcp:8080 -sTCP:LISTEN)\n[ -n \"$pids\" ] && kill -TERM $pids\nsleep 2\npids=$(lsof -ti tcp:8080 -sTCP:LISTEN)\n[ -n \"$pids\" ] && kill -KILL $pids\ntrue\n",
+        "ready_check": {
+          "path": "/models",
+          "timeout_s": 60
+        }
+      },
+      "llamafile-mtp4": {
+        "base_url": "http://127.0.0.1:8080/v1",
+        "label_suffix": "-llamafile-mtp4",
+        "model_template": "{vars.lms_models}/{served_model_name}.gguf",
+        "start_cmd": "/Users/mala/llamafile-42ff11b/llamafile-0.10.6-42ff11b -m {model} --server --ctx-size 16384 --spec-type draft-mtp --spec-draft-n-max 4 --spec-draft-backend-sampling\n",
+        "foreground": true,
+        "stop_cmd": "pids=$(lsof -ti tcp:8080 -sTCP:LISTEN)\n[ -n \"$pids\" ] && kill -TERM $pids\nsleep 2\npids=$(lsof -ti tcp:8080 -sTCP:LISTEN)\n[ -n \"$pids\" ] && kill -KILL $pids\ntrue\n",
+        "ready_check": {
+          "path": "/models",
+          "timeout_s": 60
+        }
+      },
+      "llama-cpp-mtp4": {
+        "base_url": "http://127.0.0.1:8080/v1",
+        "label_suffix": "-llamacpp-mtp4",
+        "model_template": "{vars.lms_models}/{served_model_name}.gguf",
+        "start_cmd": "/Users/mala/workspace/llama.cpp/build/bin/llama-server -m {model} --ctx-size 16384 --spec-type draft-mtp --spec-draft-n-max 4 --spec-draft-backend-sampling\n",
+        "foreground": true,
+        "stop_cmd": "pids=$(lsof -ti tcp:8080 -sTCP:LISTEN)\n[ -n \"$pids\" ] && kill -TERM $pids\nsleep 2\npids=$(lsof -ti tcp:8080 -sTCP:LISTEN)\n[ -n \"$pids\" ] && kill -KILL $pids\ntrue\n",
+        "ready_check": {
+          "path": "/models",
+          "timeout_s": 60
+        }
+      },
+      "ollama": {
+        "base_url": "http://127.0.0.1:11434/v1",
+        "label_suffix": "-ollama",
+        "model_template": "{served_model_name}",
+        "list_models_cmd": "ollama ls",
+        "start_cmd": "mkdir -p logs\nOLLAMA_CONTEXT_LENGTH=16384 ollama serve >>logs/ollama-serve.log 2>&1 &\necho $! > /tmp/benchy-ollama.pid\nuntil curl -sf http://127.0.0.1:11434/v1/models >/dev/null; do sleep 0.5; done\nollama run {model} '' </dev/null >/dev/null 2>&1\n",
+        "stop_cmd": "kill \"$(cat /tmp/benchy-ollama.pid 2>/dev/null)\" 2>/dev/null || true\nrm -f /tmp/benchy-ollama.pid\nkillall Ollama 2>/dev/null || true\n",
+        "ready_check": {
+          "path": "/models",
+          "timeout_s": 120
+        }
+      },
+      "ollama-mtp": {
+        "base_url": "http://127.0.0.1:11434/v1",
+        "label_suffix": "-ollama-mtp",
+        "model_template": "{served_model_name}",
+        "list_models_cmd": "ollama ls",
+        "start_cmd": "mkdir -p logs\nOLLAMA_CONTEXT_LENGTH=16384 ollama serve >>logs/ollama-serve.log 2>&1 &\necho $! > /tmp/benchy-ollama.pid\nuntil curl -sf http://127.0.0.1:11434/v1/models >/dev/null; do sleep 0.5; done\nollama run {model} '' </dev/null >/dev/null 2>&1\n",
+        "stop_cmd": "kill \"$(cat /tmp/benchy-ollama.pid 2>/dev/null)\" 2>/dev/null || true\nrm -f /tmp/benchy-ollama.pid\nkillall Ollama 2>/dev/null || true\n",
+        "ready_check": {
+          "path": "/models",
+          "timeout_s": 120
+        }
+      },
+      "ollama-mtp4": {
+        "base_url": "http://127.0.0.1:11434/v1",
+        "label_suffix": "-ollama-mtp4",
+        "model_template": "{served_model_name}",
+        "list_models_cmd": "ollama ls",
+        "start_cmd": "mkdir -p logs\nOLLAMA_CONTEXT_LENGTH=16384 ollama serve >>logs/ollama-serve.log 2>&1 &\necho $! > /tmp/benchy-ollama.pid\nuntil curl -sf http://127.0.0.1:11434/v1/models >/dev/null; do sleep 0.5; done\nollama run {model} '' </dev/null >/dev/null 2>&1\n",
+        "stop_cmd": "kill \"$(cat /tmp/benchy-ollama.pid 2>/dev/null)\" 2>/dev/null || true\nrm -f /tmp/benchy-ollama.pid\nkillall Ollama 2>/dev/null || true\n",
+        "ready_check": {
+          "path": "/models",
+          "timeout_s": 120
+        }
+      },
+      "lm-studio": {
+        "base_url": "http://127.0.0.1:1234/v1",
+        "label_suffix": "-lmstudio",
+        "model_template": "{served_model_name}",
+        "list_models_cmd": "lms ls --variants",
+        "start_cmd": "lms server start\nlms load {model} --gpu max -c 16384\n",
+        "stop_cmd": "lms unload --all\nlms server stop\n",
+        "ready_check": {
+          "path": "/models",
+          "timeout_s": 180
+        }
+      }
+    },
+    "models": [
+      {
+        "name": "Qwen3.5-0.8B-Q8_0",
+        "tokenizer": "Qwen/Qwen3.5-0.8B",
+        "refs": {
+          "llamafile": {
+            "model": "{vars.lms_models}/Qwen3.5-0.8B-GGUF/Qwen3.5-0.8B-Q8_0.gguf"
+          },
+          "llama-cpp": {
+            "model": "{vars.lms_models}/Qwen3.5-0.8B-GGUF/Qwen3.5-0.8B-Q8_0.gguf"
+          },
+          "ollama": {
+            "served_model_name": "qwen3.5:0.8b-lms"
+          },
+          "lm-studio": {
+            "served_model_name": "qwen/qwen3.5-0.8b"
+          }
+        }
+      },
+      {
+        "name": "Qwen3.5-9B-Q4_K_M",
+        "tokenizer": "Qwen/Qwen3.5-9B",
+        "refs": {
+          "llamafile": {
+            "model": "{vars.lms_models}/Qwen3.5-9B-GGUF/Qwen3.5-9B-Q4_K_M.gguf"
+          },
+          "llama-cpp": {
+            "model": "{vars.lms_models}/Qwen3.5-9B-GGUF/Qwen3.5-9B-Q4_K_M.gguf"
+          },
+          "ollama": {
+            "served_model_name": "qwen3.5:9b-lms"
+          },
+          "lm-studio": {
+            "served_model_name": "qwen/qwen3.5-9b"
+          }
+        }
+      },
+      {
+        "name": "Qwen3.8-27B-Q4_K_M",
+        "tokenizer": "Qwen/Qwen3.8-27B",
+        "refs": {
+          "llamafile": {
+            "model": "{vars.lms_models}/Qwen3.8-27B-GGUF/Qwen3.8-27B-Q4_K_M.gguf"
+          },
+          "llama-cpp": {
+            "model": "{vars.lms_models}/Qwen3.8-27B-GGUF/Qwen3.8-27B-Q4_K_M.gguf"
+          },
+          "llamafile-mtp": {
+            "model": "{vars.lms_models}/Qwen3.8-27B-GGUF/Qwen3.8-27B-Q4_K_M.gguf"
+          },
+          "llama-cpp-mtp": {
+            "model": "{vars.lms_models}/Qwen3.8-27B-GGUF/Qwen3.8-27B-Q4_K_M.gguf"
+          },
+          "llamafile-mtp4": {
+            "model": "{vars.lms_models}/Qwen3.8-27B-GGUF/Qwen3.8-27B-Q4_K_M.gguf"
+          },
+          "llama-cpp-mtp4": {
+            "model": "{vars.lms_models}/Qwen3.8-27B-GGUF/Qwen3.8-27B-Q4_K_M.gguf"
+          },
+          "ollama": {
+            "served_model_name": "qwen3.8:27b-lms"
+          },
+          "ollama-mtp": {
+            "served_model_name": "qwen3.8:27b-lms-mtp"
+          },
+          "ollama-mtp4": {
+            "served_model_name": "qwen3.8:27b-lms-mtp4"
+          },
+          "lm-studio": {
+            "served_model_name": "qwen/qwen3.8-27b"
+          }
+        }
+      }
+    ],
+    "sweeps": {
+      "pp": [
+        1024,
+        2048,
+        4096,
+        8192
+      ],
+      "tg": [
+        32,
+        64
+      ]
+    },
+    "benchy_cmd": "uvx llama-benchy@0.4.0 \\\n  --base-url {base_url} \\\n  --model {label} \\\n  --served-model-name {served_model_name} \\\n  --tokenizer {tokenizer} \\\n  --pp {pp} \\\n  --tg {tg} \\\n  --runs 15 \\\n  --no-cache \\\n  --no-warmup \\\n  --no-adapt-prompt \\\n  --skip-coherence \\\n  --save-result {result_file} \\\n  --format json\n",
+    "results_dir": "./results",
+    "experiments": [
+      {
+        "id": "qwen3.5-0.8b-all-servers",
+        "servers": [
+          "llamafile",
+          "llama-cpp",
+          "ollama",
+          "lm-studio"
+        ],
+        "models": [
+          "Qwen3.5-0.8B-Q8_0"
+        ],
+        "pp": "$sweeps.pp",
+        "tg": "$sweeps.tg"
+      },
+      {
+        "id": "qwen3.5-9b-all-servers",
+        "servers": [
+          "llamafile",
+          "llama-cpp",
+          "ollama",
+          "lm-studio"
+        ],
+        "models": [
+          "Qwen3.5-9B-Q4_K_M"
+        ],
+        "pp": "$sweeps.pp",
+        "tg": "$sweeps.tg"
+      },
+      {
+        "id": "qwen3.8-27b-all-servers",
+        "servers": [
+          "llamafile",
+          "llama-cpp",
+          "ollama"
+        ],
+        "models": [
+          "Qwen3.8-27B-Q4_K_M"
+        ],
+        "pp": "$sweeps.pp",
+        "tg": "$sweeps.tg"
+      },
+      {
+        "id": "qwen3.8-27b-mtp",
+        "servers": [
+          "llamafile-mtp",
+          "llama-cpp-mtp",
+          "ollama-mtp",
+          "lm-studio"
+        ],
+        "models": [
+          "Qwen3.8-27B-Q4_K_M"
+        ],
+        "pp": "$sweeps.pp",
+        "tg": "$sweeps.tg"
+      },
+      {
+        "id": "qwen3.8-27b-mtp4",
+        "servers": [
+          "llamafile-mtp4",
+          "llama-cpp-mtp4",
+          "ollama-mtp4"
+        ],
+        "models": [
+          "Qwen3.8-27B-Q4_K_M"
+        ],
+        "pp": "$sweeps.pp",
+        "tg": "$sweeps.tg"
+      }
+    ]
+  },
+  "runs": [
+    {
+      "experiment_id": "qwen3.5-9b-all-servers",
+      "server": "llamafile",
+      "model": "Qwen3.5-9B-Q4_K_M",
+      "label": "Qwen3.5-9B-Q4_K_M-llamafile",
+      "pp": 1024,
+      "tg": 32,
+      "status": "success",
+      "result_file": "results/qwen3.5-9b-all-servers_Qwen3.5-9B-Q4_K_M-llamafile_pp1024_tg32.json",
+      "metrics": {
+        "pp_throughput": {
+          "mean": 781.9078831110875,
+          "std": 0.31153395312251586,
+          "n": 10,
+          "median": 781.9059264772653,
+          "sd": 2.3475190314572876,
+          "n_all": 14,
+          "trimmed_low": [
+            772.9991353915672,
+            781.0380806034875
+          ],
+          "trimmed_high": [
+            782.3921002246074,
+            782.8237091533589
+          ],
+          "kept": [
+            781.4249922547361,
+            781.4556278558921,
+            781.7169789521992,
+            781.7868937514572,
+            781.8279278823225,
+            781.9839250722082,
+            782.0346901142726,
+            782.1381834341563,
+            782.3329038954029,
+            782.3767078982274
+          ],
+          "sample": [
+            772.9991353915672,
+            782.1381834341563,
+            782.8237091533589,
+            782.3767078982274,
+            782.3921002246074,
+            781.9839250722082,
+            781.4249922547361,
+            781.7169789521992,
+            781.4556278558921,
+            781.0380806034875,
+            781.8279278823225,
+            782.3329038954029,
+            782.0346901142726,
+            781.7868937514572
+          ]
+        },
+        "tg_throughput": {
+          "mean": 66.5096511678681,
+          "std": 0.13109443703909068,
+          "n": 10,
+          "median": 66.44684437374099,
+          "sd": 0.20631618048965647,
+          "n_all": 14,
+          "trimmed_low": [
+            66.36834209575255,
+            66.37681538121231
+          ],
+          "trimmed_high": [
+            66.91145712459685,
+            67.01309917381835
+          ],
+          "kept": [
+            66.39946245115294,
+            66.41938551673886,
+            66.4213539738394,
+            66.42194710508466,
+            66.44479701573522,
+            66.44889173174674,
+            66.49617786977883,
+            66.52180291987138,
+            66.73735089179864,
+            66.78534220293439
+          ],
+          "sample": [
+            66.91145712459685,
+            66.73735089179864,
+            66.42194710508466,
+            66.37681538121231,
+            66.44889173174674,
+            66.39946245115294,
+            66.41938551673886,
+            66.49617786977883,
+            67.01309917381835,
+            66.78534220293439,
+            66.36834209575255,
+            66.52180291987138,
+            66.4213539738394,
+            66.44479701573522
+          ]
+        },
+        "ttfr": {
+          "mean": 1323.1816083192825,
+          "std": 0.5723800935216491,
+          "n": 10,
+          "median": 1323.2276253402233,
+          "sd": 4.451090662026969,
+          "n_all": 14,
+          "trimmed_low": [
+            1320.3997919335961,
+            1321.5563744306564
+          ],
+          "trimmed_high": [
+            1324.6969999745488,
+            1339.7585842758417
+          ],
+          "kept": [
+            1322.4058747291565,
+            1322.4318753927946,
+            1322.5058745592833,
+            1323.0098746716976,
+            1323.0957090854645,
+            1323.3595415949821,
+            1323.4289586544037,
+            1323.547249659896,
+            1323.9896250888705,
+            1324.0414997562766
+          ],
+          "sample": [
+            1339.7585842758417,
+            1321.5563744306564,
+            1320.3997919335961,
+            1322.4318753927946,
+            1322.4058747291565,
+            1323.0957090854645,
+            1324.0414997562766,
+            1323.547249659896,
+            1323.9896250888705,
+            1324.6969999745488,
+            1323.3595415949821,
+            1322.5058745592833,
+            1323.0098746716976,
+            1323.4289586544037
+          ]
+        }
+      }
+    },
+    {
+      "experiment_id": "qwen3.5-9b-all-servers",
+      "server": "llama-cpp",
+      "model": "Qwen3.5-9B-Q4_K_M",
+      "label": "Qwen3.5-9B-Q4_K_M-llamacpp",
+      "pp": 1024,
+      "tg": 32,
+      "status": "success",
+      "result_file": "results/qwen3.5-9b-all-servers_Qwen3.5-9B-Q4_K_M-llamacpp_pp1024_tg32.json",
+      "metrics": {
+        "pp_throughput": {
+          "mean": 778.2822101349241,
+          "std": 0.4793380633401889,
+          "n": 10,
+          "median": 778.312789267884,
+          "sd": 2.932556179682218,
+          "n_all": 14,
+          "trimmed_low": [
+            770.0904716899645,
+            770.5289834326908
+          ],
+          "trimmed_high": [
+            779.2616341372026,
+            779.9064141817025
+          ],
+          "kept": [
+            777.3685583260032,
+            777.8380268635142,
+            778.0249424118781,
+            778.030243359723,
+            778.2192115819731,
+            778.4063669537948,
+            778.4694884026086,
+            778.4849434490844,
+            778.852367143884,
+            779.1279528567766
+          ],
+          "sample": [
+            778.0249424118781,
+            778.4849434490844,
+            778.2192115819731,
+            777.3685583260032,
+            770.0904716899645,
+            778.852367143884,
+            779.1279528567766,
+            778.030243359723,
+            770.5289834326908,
+            778.4063669537948,
+            777.8380268635142,
+            779.9064141817025,
+            779.2616341372026,
+            778.4694884026086
+          ]
+        },
+        "tg_throughput": {
+          "mean": 67.16999564826988,
+          "std": 0.1204399419199381,
+          "n": 10,
+          "median": 67.13697368340047,
+          "sd": 0.4894704462342475,
+          "n_all": 14,
+          "trimmed_low": [
+            65.78621022624233,
+            65.93008694893095
+          ],
+          "trimmed_high": [
+            67.3791344778233,
+            67.40139625147478
+          ],
+          "kept": [
+            66.9661058984678,
+            67.08213122972003,
+            67.08748446306625,
+            67.11492328682417,
+            67.12453906852156,
+            67.14940829827938,
+            67.16908663845474,
+            67.31068409398685,
+            67.33339398989985,
+            67.36219951547821
+          ],
+          "sample": [
+            65.78621022624233,
+            67.14940829827938,
+            67.33339398989985,
+            67.40139625147478,
+            67.08213122972003,
+            67.12453906852156,
+            67.08748446306625,
+            67.16908663845474,
+            66.9661058984678,
+            67.11492328682417,
+            67.31068409398685,
+            65.93008694893095,
+            67.3791344778233,
+            67.36219951547821
+          ]
+        },
+        "ttfr": {
+          "mean": 1328.9707459509373,
+          "std": 0.7688885654639458,
+          "n": 10,
+          "median": 1329.0901039727032,
+          "sd": 5.587457488366422,
+          "n_all": 14,
+          "trimmed_low": [
+            1326.5890423208475,
+            1327.6860415935516
+          ],
+          "trimmed_high": [
+            1344.0219992771745,
+            1344.786874949932
+          ],
+          "kept": [
+            1327.7253340929747,
+            1327.9137080535293,
+            1328.3832920715213,
+            1328.5098746418953,
+            1329.0362497791648,
+            1329.1439581662416,
+            1329.463416710496,
+            1329.630957916379,
+            1329.7861255705357,
+            1330.1145425066352
+          ],
+          "sample": [
+            1328.5098746418953,
+            1327.7253340929747,
+            1329.463416710496,
+            1329.630957916379,
+            1344.786874949932,
+            1328.3832920715213,
+            1327.9137080535293,
+            1329.7861255705357,
+            1344.0219992771745,
+            1329.1439581662416,
+            1330.1145425066352,
+            1326.5890423208475,
+            1327.6860415935516,
+            1329.0362497791648
+          ]
+        }
+      }
+    },
+    {
+      "experiment_id": "qwen3.5-9b-all-servers",
+      "server": "ollama",
+      "model": "Qwen3.5-9B-Q4_K_M",
+      "label": "Qwen3.5-9B-Q4_K_M-ollama",
+      "pp": 1024,
+      "tg": 32,
+      "status": "success",
+      "result_file": "results/qwen3.5-9b-all-servers_Qwen3.5-9B-Q4_K_M-ollama_pp1024_tg32.json",
+      "metrics": {
+        "pp_throughput": {
+          "mean": 777.6042999629916,
+          "std": 0.37959584051652273,
+          "n": 10,
+          "median": 777.6323487365747,
+          "sd": 0.6195778653428187,
+          "n_all": 14,
+          "trimmed_low": [
+            776.6289355840657,
+            776.7752056652566
+          ],
+          "trimmed_high": [
+            778.4580263632637,
+            778.858225225893
+          ],
+          "kept": [
+            776.893609060159,
+            777.2443145638554,
+            777.3872370936393,
+            777.4362856100277,
+            777.6188244709169,
+            777.6458730022325,
+            777.6758719973923,
+            777.8059597819528,
+            778.0113555465288,
+            778.3236685032115
+          ],
+          "sample": [
+            777.6758719973923,
+            778.0113555465288,
+            777.4362856100277,
+            778.4580263632637,
+            778.3236685032115,
+            777.2443145638554,
+            777.8059597819528,
+            778.858225225893,
+            776.6289355840657,
+            777.3872370936393,
+            777.6188244709169,
+            776.7752056652566,
+            776.893609060159,
+            777.6458730022325
+          ]
+        },
+        "tg_throughput": {
+          "mean": 65.25911976289247,
+          "std": 0.09003059963972836,
+          "n": 10,
+          "median": 65.25159133638766,
+          "sd": 0.16696176204680277,
+          "n_all": 14,
+          "trimmed_low": [
+            64.99722244340772,
+            65.04150901428297
+          ],
+          "trimmed_high": [
+            65.56127774606456,
+            65.58076436187612
+          ],
+          "kept": [
+            65.11268473281014,
+            65.17035293162381,
+            65.20371401459226,
+            65.2095487281107,
+            65.23495224978757,
+            65.26823042298774,
+            65.28945115740981,
+            65.32111605536151,
+            65.3348315344943,
+            65.44631580174679
+          ],
+          "sample": [
+            65.32111605536151,
+            65.2095487281107,
+            65.04150901428297,
+            65.58076436187612,
+            65.56127774606456,
+            65.11268473281014,
+            65.28945115740981,
+            65.3348315344943,
+            65.17035293162381,
+            65.26823042298774,
+            65.20371401459226,
+            65.44631580174679,
+            64.99722244340772,
+            65.23495224978757
+          ]
+        },
+        "ttfr": {
+          "mean": 1332.5039042159915,
+          "std": 0.649103999819729,
+          "n": 10,
+          "median": 1332.4556252919137,
+          "sd": 1.0592422046507957,
+          "n_all": 14,
+          "trimmed_low": [
+            1330.3627921268344,
+            1331.0452923178673
+          ],
+          "trimmed_high": [
+            1333.9228751137853,
+            1334.1735824942589
+          ],
+          "kept": [
+            1331.2745839357376,
+            1331.8078750744462,
+            1332.1588328108191,
+            1332.3812084272504,
+            1332.4325000867248,
+            1332.4787504971027,
+            1332.7909586951137,
+            1332.8748745843768,
+            1333.1194575875998,
+            1333.720000460744
+          ],
+          "sample": [
+            1332.3812084272504,
+            1331.8078750744462,
+            1332.7909586951137,
+            1331.0452923178673,
+            1331.2745839357376,
+            1333.1194575875998,
+            1332.1588328108191,
+            1330.3627921268344,
+            1334.1735824942589,
+            1332.8748745843768,
+            1332.4787504971027,
+            1333.9228751137853,
+            1333.720000460744,
+            1332.4325000867248
+          ]
+        }
+      }
+    },
+    {
+      "experiment_id": "qwen3.5-9b-all-servers",
+      "server": "lm-studio",
+      "model": "Qwen3.5-9B-Q4_K_M",
+      "label": "Qwen3.5-9B-Q4_K_M-lmstudio",
+      "pp": 1024,
+      "tg": 32,
+      "status": "success",
+      "result_file": "results/qwen3.5-9b-all-servers_Qwen3.5-9B-Q4_K_M-lmstudio_pp1024_tg32.json",
+      "metrics": {
+        "pp_throughput": {
+          "mean": 727.8798754079519,
+          "std": 1.718494140273425,
+          "n": 10,
+          "median": 728.5975564316525,
+          "sd": 2.2622540981978716,
+          "n_all": 14,
+          "trimmed_low": [
+            724.0169986890543,
+            724.8333909251487
+          ],
+          "trimmed_high": [
+            730.094653023811,
+            731.4980958739557
+          ],
+          "kept": [
+            725.3281595050003,
+            725.6473616345679,
+            726.0850703306146,
+            726.3563982089552,
+            728.4303062014617,
+            728.7648066618433,
+            729.1875589293982,
+            729.3824396906894,
+            729.7703702003646,
+            729.846282716624
+          ],
+          "sample": [
+            724.0169986890543,
+            730.094653023811,
+            728.7648066618433,
+            728.4303062014617,
+            729.7703702003646,
+            726.0850703306146,
+            725.3281595050003,
+            731.4980958739557,
+            729.1875589293982,
+            729.846282716624,
+            724.8333909251487,
+            725.6473616345679,
+            726.3563982089552,
+            729.3824396906894
+          ]
+        },
+        "tg_throughput": {
+          "mean": 77.79726795528953,
+          "std": 1.0499366074520553,
+          "n": 10,
+          "median": 77.42631069424064,
+          "sd": 1.2435758619413828,
+          "n_all": 14,
+          "trimmed_low": [
+            76.35032311929862,
+            76.37447888999984
+          ],
+          "trimmed_high": [
+            79.33468907494887,
+            79.84218711064307
+          ],
+          "kept": [
+            76.45818540087879,
+            76.8724963281116,
+            76.94812164774801,
+            77.02589752518053,
+            77.40330237273004,
+            77.44931901575126,
+            77.91756506155983,
+            79.28049124889861,
+            79.30664679401906,
+            79.31065415801754
+          ],
+          "sample": [
+            79.31065415801754,
+            77.40330237273004,
+            76.8724963281116,
+            77.91756506155983,
+            76.37447888999984,
+            79.33468907494887,
+            79.84218711064307,
+            76.35032311929862,
+            76.45818540087879,
+            76.94812164774801,
+            79.30664679401906,
+            77.44931901575126,
+            79.28049124889861,
+            77.02589752518053
+          ]
+        },
+        "ttfr": {
+          "mean": 1422.9391789995134,
+          "std": 3.2286279123213024,
+          "n": 10,
+          "median": 1421.3950200937688,
+          "sd": 4.346818915980735,
+          "n_all": 14,
+          "trimmed_low": [
+            1415.7676668837667,
+            1418.4848750010133
+          ],
+          "trimmed_high": [
+            1428.7648750469089,
+            1430.3734172135592
+          ],
+          "kept": [
+            1418.9668335020542,
+            1419.8677921667695,
+            1420.2466662973166,
+            1420.4845000058413,
+            1421.069249510765,
+            1421.7207906767726,
+            1425.7737500593066,
+            1426.305708475411,
+            1427.1647073328495,
+            1427.7917919680476
+          ],
+          "sample": [
+            1430.3734172135592,
+            1418.4848750010133,
+            1421.069249510765,
+            1421.7207906767726,
+            1420.4845000058413,
+            1426.305708475411,
+            1427.7917919680476,
+            1415.7676668837667,
+            1420.2466662973166,
+            1418.9668335020542,
+            1428.7648750469089,
+            1427.1647073328495,
+            1425.7737500593066,
+            1419.8677921667695
+          ]
+        }
+      }
+    },
+    {
+      "experiment_id": "qwen3.5-9b-all-servers",
+      "server": "llamafile",
+      "model": "Qwen3.5-9B-Q4_K_M",
+      "label": "Qwen3.5-9B-Q4_K_M-llamafile",
+      "pp": 1024,
+      "tg": 64,
+      "status": "success",
+      "result_file": "results/qwen3.5-9b-all-servers_Qwen3.5-9B-Q4_K_M-llamafile_pp1024_tg64.json",
+      "metrics": {
+        "pp_throughput": {
+          "mean": 782.0471774461594,
+          "std": 0.3009011103645515,
+          "n": 10,
+          "median": 782.0711329429114,
+          "sd": 2.2624409646430097,
+          "n_all": 14,
+          "trimmed_low": [
+            773.473135383576,
+            781.3570037353956
+          ],
+          "trimmed_high": [
+            782.5337561037089,
+            782.997939809877
+          ],
+          "kept": [
+            781.5357330331066,
+            781.5597008689656,
+            781.8877291394707,
+            781.9967552493827,
+            782.0599188397936,
+            782.0823470460293,
+            782.1984299332332,
+            782.2914150934001,
+            782.4034148546988,
+            782.4563304035136
+          ],
+          "sample": [
+            781.5597008689656,
+            782.1984299332332,
+            782.4563304035136,
+            782.0823470460293,
+            782.2914150934001,
+            781.8877291394707,
+            782.4034148546988,
+            782.5337561037089,
+            781.9967552493827,
+            782.997939809877,
+            773.473135383576,
+            781.3570037353956,
+            781.5357330331066,
+            782.0599188397936
+          ]
+        },
+        "tg_throughput": {
+          "mean": 66.64211233956358,
+          "std": 0.09136107117749484,
+          "n": 10,
+          "median": 66.62251182862124,
+          "sd": 0.1450644041211509,
+          "n_all": 14,
+          "trimmed_low": [
+            66.36583748235576,
+            66.44582223384033
+          ],
+          "trimmed_high": [
+            66.76064675843404,
+            66.92943263174422
+          ],
+          "kept": [
+            66.50870554053176,
+            66.52504862092796,
+            66.56601353696621,
+            66.5946340437303,
+            66.61891722208624,
+            66.62610643515626,
+            66.73072284003312,
+            66.74055505513263,
+            66.75403260854807,
+            66.75638749252333
+          ],
+          "sample": [
+            66.44582223384033,
+            66.62610643515626,
+            66.74055505513263,
+            66.92943263174422,
+            66.73072284003312,
+            66.56601353696621,
+            66.5946340437303,
+            66.50870554053176,
+            66.36583748235576,
+            66.61891722208624,
+            66.75638749252333,
+            66.75403260854807,
+            66.76064675843404,
+            66.52504862092796
+          ]
+        },
+        "ttfr": {
+          "mean": 1322.8749501518905,
+          "std": 0.42995640946121627,
+          "n": 10,
+          "median": 1322.84514605999,
+          "sd": 4.210194707986762,
+          "n_all": 14,
+          "trimmed_low": [
+            1321.3972495868802,
+            1322.1805831417441
+          ],
+          "trimmed_high": [
+            1324.1705829277635,
+            1338.95199932158
+          ],
+          "kept": [
+            1322.3113333806396,
+            1322.4007077515125,
+            1322.5884167477489,
+            1322.5899152457714,
+            1322.7470414713025,
+            1322.9432506486773,
+            1322.981166653335,
+            1323.087959550321,
+            1323.2723344117403,
+            1323.8273756578565
+          ],
+          "sample": [
+            1323.8273756578565,
+            1322.7470414713025,
+            1322.3113333806396,
+            1322.9432506486773,
+            1322.5899152457714,
+            1323.2723344117403,
+            1322.4007077515125,
+            1322.1805831417441,
+            1323.087959550321,
+            1321.3972495868802,
+            1338.95199932158,
+            1324.1705829277635,
+            1322.5884167477489,
+            1322.981166653335
+          ]
+        }
+      }
+    },
+    {
+      "experiment_id": "qwen3.5-9b-all-servers",
+      "server": "llama-cpp",
+      "model": "Qwen3.5-9B-Q4_K_M",
+      "label": "Qwen3.5-9B-Q4_K_M-llamacpp",
+      "pp": 1024,
+      "tg": 64,
+      "status": "success",
+      "result_file": "results/qwen3.5-9b-all-servers_Qwen3.5-9B-Q4_K_M-llamacpp_pp1024_tg64.json",
+      "metrics": {
+        "pp_throughput": {
+          "mean": 777.5813982979623,
+          "std": 2.5485204179055874,
+          "n": 10,
+          "median": 777.9157258243987,
+          "sd": 3.6358059483384784,
+          "n_all": 14,
+          "trimmed_low": [
+            769.457676463057,
+            770.0118848882356
+          ],
+          "trimmed_high": [
+            779.3807966307606,
+            779.5268573233732
+          ],
+          "kept": [
+            770.1852645355632,
+            777.6665469719518,
+            777.6854336626064,
+            777.8459269254708,
+            777.8854997681289,
+            777.9459518806685,
+            778.9180306428364,
+            779.1458343415756,
+            779.1910933239766,
+            779.3444009268458
+          ],
+          "sample": [
+            769.457676463057,
+            777.6854336626064,
+            770.0118848882356,
+            779.3444009268458,
+            777.6665469719518,
+            770.1852645355632,
+            779.1910933239766,
+            779.5268573233732,
+            779.1458343415756,
+            778.9180306428364,
+            777.8459269254708,
+            777.9459518806685,
+            779.3807966307606,
+            777.8854997681289
+          ]
+        },
+        "tg_throughput": {
+          "mean": 67.25213022536755,
+          "std": 0.04252996826027755,
+          "n": 10,
+          "median": 67.24669321777189,
+          "sd": 0.1573168878377602,
+          "n_all": 14,
+          "trimmed_low": [
+            66.71343665024689,
+            67.15167765796171
+          ],
+          "trimmed_high": [
+            67.35197898624358,
+            67.41952393624435
+          ],
+          "kept": [
+            67.19161447272403,
+            67.21100171884717,
+            67.2154028140103,
+            67.24233275928286,
+            67.24434541215773,
+            67.24904102338606,
+            67.25749171365783,
+            67.25753658444869,
+            67.31708978309281,
+            67.33544597206799
+          ],
+          "sample": [
+            67.33544597206799,
+            67.24434541215773,
+            67.15167765796171,
+            67.31708978309281,
+            67.41952393624435,
+            67.24233275928286,
+            67.21100171884717,
+            67.19161447272403,
+            67.35197898624358,
+            67.25749171365783,
+            67.24904102338606,
+            67.25753658444869,
+            67.2154028140103,
+            66.71343665024689
+          ]
+        },
+        "ttfr": {
+          "mean": 1330.6473458185792,
+          "std": 4.815984942581427,
+          "n": 10,
+          "median": 1330.0104369409382,
+          "sd": 6.85634078417716,
+          "n_all": 14,
+          "trimmed_low": [
+            1327.0162092521787,
+            1327.263250015676
+          ],
+          "trimmed_high": [
+            1344.9527090415359,
+            1345.9208337590098
+          ],
+          "kept": [
+            1327.5118339806795,
+            1327.5737911462784,
+            1327.8348334133625,
+            1327.9119171202183,
+            1329.9587909132242,
+            1330.0620829686522,
+            1330.1297081634402,
+            1330.4040422663093,
+            1330.4363330826163,
+            1344.650125131011
+          ],
+          "sample": [
+            1345.9208337590098,
+            1330.4040422663093,
+            1344.9527090415359,
+            1327.5737911462784,
+            1330.4363330826163,
+            1344.650125131011,
+            1327.8348334133625,
+            1327.263250015676,
+            1327.9119171202183,
+            1327.0162092521787,
+            1330.1297081634402,
+            1329.9587909132242,
+            1327.5118339806795,
+            1330.0620829686522
+          ]
+        }
+      }
+    },
+    {
+      "experiment_id": "qwen3.5-9b-all-servers",
+      "server": "ollama",
+      "model": "Qwen3.5-9B-Q4_K_M",
+      "label": "Qwen3.5-9B-Q4_K_M-ollama",
+      "pp": 1024,
+      "tg": 64,
+      "status": "success",
+      "result_file": "results/qwen3.5-9b-all-servers_Qwen3.5-9B-Q4_K_M-ollama_pp1024_tg64.json",
+      "metrics": {
+        "pp_throughput": {
+          "mean": 777.3870196991566,
+          "std": 0.2694699083956941,
+          "n": 10,
+          "median": 777.47235550558,
+          "sd": 0.5504688055054129,
+          "n_all": 14,
+          "trimmed_low": [
+            776.5928522039152,
+            776.6160620138933
+          ],
+          "trimmed_high": [
+            778.2034105966397,
+            778.6695416670949
+          ],
+          "kept": [
+            776.8180827652016,
+            777.1659200377538,
+            777.1730515336341,
+            777.2192987259666,
+            777.437584886871,
+            777.507126124289,
+            777.5558978885763,
+            777.6361095114162,
+            777.6460770766214,
+            777.711048441236
+          ],
+          "sample": [
+            778.2034105966397,
+            777.5558978885763,
+            776.8180827652016,
+            777.2192987259666,
+            778.6695416670949,
+            777.711048441236,
+            777.1730515336341,
+            777.1659200377538,
+            776.5928522039152,
+            777.507126124289,
+            777.437584886871,
+            777.6361095114162,
+            776.6160620138933,
+            777.6460770766214
+          ]
+        },
+        "tg_throughput": {
+          "mean": 65.13337432477331,
+          "std": 0.14343568524291955,
+          "n": 10,
+          "median": 65.14569109090081,
+          "sd": 0.48941586847421575,
+          "n_all": 14,
+          "trimmed_low": [
+            64.59003715788327,
+            64.69564036591797
+          ],
+          "trimmed_high": [
+            66.26772214896938,
+            66.36242653657658
+          ],
+          "kept": [
+            64.93631988778296,
+            64.96401092628916,
+            64.97627222567074,
+            65.04921840609533,
+            65.11907513908668,
+            65.17230704271496,
+            65.20195425613795,
+            65.21695808906186,
+            65.33826880056434,
+            65.35935847432916
+          ],
+          "sample": [
+            64.97627222567074,
+            65.11907513908668,
+            66.36242653657658,
+            64.93631988778296,
+            66.26772214896938,
+            65.33826880056434,
+            64.96401092628916,
+            64.59003715788327,
+            65.21695808906186,
+            65.20195425613795,
+            65.35935847432916,
+            65.17230704271496,
+            64.69564036591797,
+            65.04921840609533
+          ]
+        },
+        "ttfr": {
+          "mean": 1333.068595919758,
+          "std": 0.5385203601661182,
+          "n": 10,
+          "median": 1332.995812408626,
+          "sd": 0.9142270702701676,
+          "n_all": 14,
+          "trimmed_low": [
+            1330.7047924026847,
+            1332.341375760734
+          ],
+          "trimmed_high": [
+            1334.2159586027265,
+            1334.2557502910495
+          ],
+          "kept": [
+            1332.4524573981762,
+            1332.4695006012917,
+            1332.6066676527262,
+            1332.6900843530893,
+            1332.809042185545,
+            1333.1825826317072,
+            1333.2617497071624,
+            1333.273958414793,
+            1333.8697077706456,
+            1334.0702084824443
+          ],
+          "sample": [
+            1334.0702084824443,
+            1332.6066676527262,
+            1333.8697077706456,
+            1333.1825826317072,
+            1330.7047924026847,
+            1332.341375760734,
+            1333.2617497071624,
+            1333.273958414793,
+            1334.2557502910495,
+            1332.6900843530893,
+            1332.809042185545,
+            1332.4695006012917,
+            1334.2159586027265,
+            1332.4524573981762
+          ]
+        }
+      }
+    },
+    {
+      "experiment_id": "qwen3.5-9b-all-servers",
+      "server": "lm-studio",
+      "model": "Qwen3.5-9B-Q4_K_M",
+      "label": "Qwen3.5-9B-Q4_K_M-lmstudio",
+      "pp": 1024,
+      "tg": 64,
+      "status": "success",
+      "result_file": "results/qwen3.5-9b-all-servers_Qwen3.5-9B-Q4_K_M-lmstudio_pp1024_tg64.json",
+      "metrics": {
+        "pp_throughput": {
+          "mean": 728.6833155892555,
+          "std": 2.0454955770760486,
+          "n": 10,
+          "median": 728.5098290842574,
+          "sd": 3.4570477391060757,
+          "n_all": 14,
+          "trimmed_low": [
+            724.3872122020452,
+            725.010586915489
+          ],
+          "trimmed_high": [
+            733.078128117287,
+            737.4074617058117
+          ],
+          "kept": [
+            725.0382091433094,
+            726.3048604041164,
+            727.3173032530029,
+            728.1793625811569,
+            728.3067751622789,
+            728.7128830062359,
+            729.2618231270396,
+            730.6282765302004,
+            731.2466300819995,
+            731.837032603215
+          ],
+          "sample": [
+            725.0382091433094,
+            737.4074617058117,
+            730.6282765302004,
+            728.7128830062359,
+            728.1793625811569,
+            731.837032603215,
+            724.3872122020452,
+            733.078128117287,
+            729.2618231270396,
+            726.3048604041164,
+            728.3067751622789,
+            731.2466300819995,
+            727.3173032530029,
+            725.010586915489
+          ]
+        },
+        "tg_throughput": {
+          "mean": 70.65810503474003,
+          "std": 0.4438881932766421,
+          "n": 10,
+          "median": 70.57527014407975,
+          "sd": 0.7599528461201689,
+          "n_all": 14,
+          "trimmed_low": [
+            68.68273193665958,
+            69.68931145922953
+          ],
+          "trimmed_high": [
+            71.3413125693492,
+            71.6213718744375
+          ],
+          "kept": [
+            70.09516387025734,
+            70.2025505550218,
+            70.22083794954159,
+            70.26239423088869,
+            70.55993222514941,
+            70.59060806301011,
+            70.98330615333771,
+            71.09688350036737,
+            71.26953137514028,
+            71.29984242468595
+          ],
+          "sample": [
+            70.98330615333771,
+            68.68273193665958,
+            70.09516387025734,
+            70.55993222514941,
+            71.6213718744375,
+            70.59060806301011,
+            71.3413125693492,
+            69.68931145922953,
+            70.2025505550218,
+            71.26953137514028,
+            70.26239423088869,
+            70.22083794954159,
+            71.29984242468595,
+            71.09688350036737
+          ]
+        },
+        "ttfr": {
+          "mean": 1421.2363624945283,
+          "std": 4.035999508790847,
+          "n": 10,
+          "median": 1421.4358543977141,
+          "sd": 6.388155270530548,
+          "n_all": 14,
+          "trimmed_low": [
+            1405.6659992784262,
+            1412.5909162685275
+          ],
+          "trimmed_high": [
+            1428.2317915931344,
+            1428.28612588346
+          ],
+          "kept": [
+            1414.9829158559442,
+            1416.123665869236,
+            1418.6009159311652,
+            1418.6890833079815,
+            1421.0402499884367,
+            1421.8314588069916,
+            1422.0798751339316,
+            1425.137834623456,
+            1425.744665786624,
+            1428.1329596415162
+          ],
+          "sample": [
+            1428.2317915931344,
+            1405.6659992784262,
+            1418.6890833079815,
+            1421.0402499884367,
+            1422.0798751339316,
+            1414.9829158559442,
+            1428.1329596415162,
+            1412.5909162685275,
+            1418.6009159311652,
+            1425.744665786624,
+            1421.8314588069916,
+            1416.123665869236,
+            1425.137834623456,
+            1428.28612588346
+          ]
+        }
+      }
+    },
+    {
+      "experiment_id": "qwen3.5-9b-all-servers",
+      "server": "llamafile",
+      "model": "Qwen3.5-9B-Q4_K_M",
+      "label": "Qwen3.5-9B-Q4_K_M-llamafile",
+      "pp": 2048,
+      "tg": 32,
+      "status": "success",
+      "result_file": "results/qwen3.5-9b-all-servers_Qwen3.5-9B-Q4_K_M-llamafile_pp2048_tg32.json",
+      "metrics": {
+        "pp_throughput": {
+          "mean": 806.8631186734876,
+          "std": 0.11748836012258201,
+          "n": 10,
+          "median": 806.8926129751947,
+          "sd": 0.2788926445546686,
+          "n_all": 14,
+          "trimmed_low": [
+            806.2896075193427,
+            806.5095667234314
+          ],
+          "trimmed_high": [
+            807.0697691705001,
+            807.5372366047426
+          ],
+          "kept": [
+            806.6310848455828,
+            806.752363024519,
+            806.7527055675616,
+            806.8099782594771,
+            806.8797805334988,
+            806.9054454168905,
+            806.9203584699037,
+            806.976069028914,
+            806.9875529544624,
+            807.0158486340662
+          ],
+          "sample": [
+            807.0158486340662,
+            806.5095667234314,
+            807.5372366047426,
+            806.752363024519,
+            806.8099782594771,
+            806.9203584699037,
+            806.9875529544624,
+            806.9054454168905,
+            806.8797805334988,
+            806.2896075193427,
+            806.976069028914,
+            806.7527055675616,
+            807.0697691705001,
+            806.6310848455828
+          ]
+        },
+        "tg_throughput": {
+          "mean": 66.42052378692956,
+          "std": 0.1701450650789333,
+          "n": 10,
+          "median": 66.4098745445562,
+          "sd": 0.20748157420537142,
+          "n_all": 14,
+          "trimmed_low": [
+            66.14332231694983,
+            66.15804997595038
+          ],
+          "trimmed_high": [
+            66.70469327024163,
+            66.71516075408087
+          ],
+          "kept": [
+            66.19753613325645,
+            66.22482955142483,
+            66.26787166752091,
+            66.29322081342862,
+            66.30435727377768,
+            66.51539181533474,
+            66.54795969164512,
+            66.55444840363852,
+            66.64117462420087,
+            66.65844789506784
+          ],
+          "sample": [
+            66.22482955142483,
+            66.64117462420087,
+            66.14332231694983,
+            66.71516075408087,
+            66.26787166752091,
+            66.70469327024163,
+            66.29322081342862,
+            66.65844789506784,
+            66.19753613325645,
+            66.51539181533474,
+            66.30435727377768,
+            66.54795969164512,
+            66.15804997595038,
+            66.55444840363852
+          ]
+        },
+        "ttfr": {
+          "mean": 2551.4315080828965,
+          "std": 0.41846348473852,
+          "n": 10,
+          "median": 2551.38543760404,
+          "sd": 0.9554703356942206,
+          "n_all": 14,
+          "trimmed_low": [
+            2549.3494579568505,
+            2550.058458931744
+          ],
+          "trimmed_high": [
+            2552.5967916473746,
+            2553.2929161563516
+          ],
+          "kept": [
+            2550.825582817197,
+            2550.9959580376744,
+            2551.0853743180633,
+            2551.121666096151,
+            2551.3448752462864,
+            2551.4259999617934,
+            2551.6466656699777,
+            2551.8277501687407,
+            2551.828833296895,
+            2552.212375216186
+          ],
+          "sample": [
+            2550.9959580376744,
+            2552.5967916473746,
+            2549.3494579568505,
+            2551.828833296895,
+            2551.6466656699777,
+            2550.058458931744,
+            2551.0853743180633,
+            2551.3448752462864,
+            2551.4259999617934,
+            2553.2929161563516,
+            2551.121666096151,
+            2551.8277501687407,
+            2550.825582817197,
+            2552.212375216186
+          ]
+        }
+      }
+    },
+    {
+      "experiment_id": "qwen3.5-9b-all-servers",
+      "server": "llama-cpp",
+      "model": "Qwen3.5-9B-Q4_K_M",
+      "label": "Qwen3.5-9B-Q4_K_M-llamacpp",
+      "pp": 2048,
+      "tg": 32,
+      "status": "success",
+      "result_file": "results/qwen3.5-9b-all-servers_Qwen3.5-9B-Q4_K_M-llamacpp_pp2048_tg32.json",
+      "metrics": {
+        "pp_throughput": {
+          "mean": 804.9238032462812,
+          "std": 0.23920024197633138,
+          "n": 10,
+          "median": 804.934218043274,
+          "sd": 1.1571496893636937,
+          "n_all": 14,
+          "trimmed_low": [
+            800.6534063095075,
+            804.2930671859415
+          ],
+          "trimmed_high": [
+            805.3592519857212,
+            805.5560272509019
+          ],
+          "kept": [
+            804.3714339497254,
+            804.7856118490469,
+            804.813577771996,
+            804.8185425190928,
+            804.9246157805932,
+            804.9438203059548,
+            805.0880676662936,
+            805.0927264933456,
+            805.1091488425573,
+            805.2904872842062
+          ],
+          "sample": [
+            804.8185425190928,
+            804.813577771996,
+            805.1091488425573,
+            804.9438203059548,
+            800.6534063095075,
+            804.3714339497254,
+            804.7856118490469,
+            804.2930671859415,
+            805.0880676662936,
+            805.2904872842062,
+            805.5560272509019,
+            805.0927264933456,
+            805.3592519857212,
+            804.9246157805932
+          ]
+        },
+        "tg_throughput": {
+          "mean": 66.88273556291266,
+          "std": 0.15818180449952485,
+          "n": 10,
+          "median": 66.82672029887303,
+          "sd": 0.49414162394862293,
+          "n_all": 14,
+          "trimmed_low": [
+            65.42217391357586,
+            65.80811837826376
+          ],
+          "trimmed_high": [
+            67.14194250676378,
+            67.18489332398849
+          ],
+          "kept": [
+            66.69587306889595,
+            66.70013030813418,
+            66.744026349869,
+            66.77295886100848,
+            66.79030052478026,
+            66.8631400729658,
+            66.99023064938454,
+            67.06555668719487,
+            67.09548264468005,
+            67.10965646221351
+          ],
+          "sample": [
+            66.69587306889595,
+            66.70013030813418,
+            67.18489332398849,
+            65.42217391357586,
+            67.06555668719487,
+            66.79030052478026,
+            67.10965646221351,
+            65.80811837826376,
+            67.09548264468005,
+            66.77295886100848,
+            67.14194250676378,
+            66.744026349869,
+            66.99023064938454,
+            66.8631400729658
+          ]
+        },
+        "ttfr": {
+          "mean": 2557.2519168257713,
+          "std": 0.8621149991122599,
+          "n": 10,
+          "median": 2557.050521019846,
+          "sd": 4.094111658079692,
+          "n_all": 14,
+          "trimmed_low": [
+            2555.5729577317834,
+            2555.748916231096
+          ],
+          "trimmed_high": [
+            2559.5846250653267,
+            2572.465417906642
+          ],
+          "kept": [
+            2556.1971673741937,
+            2556.415374390781,
+            2556.6714592278004,
+            2556.7760411649942,
+            2557.04312492162,
+            2557.0579171180725,
+            2557.5160002335906,
+            2557.5769999995828,
+            2557.9297496005893,
+            2559.335334226489
+          ],
+          "sample": [
+            2556.6714592278004,
+            2557.9297496005893,
+            2555.748916231096,
+            2557.5160002335906,
+            2572.465417906642,
+            2559.335334226489,
+            2556.7760411649942,
+            2559.5846250653267,
+            2557.0579171180725,
+            2556.415374390781,
+            2555.5729577317834,
+            2557.04312492162,
+            2556.1971673741937,
+            2557.5769999995828
+          ]
+        }
+      }
+    },
+    {
+      "experiment_id": "qwen3.5-9b-all-servers",
+      "server": "ollama",
+      "model": "Qwen3.5-9B-Q4_K_M",
+      "label": "Qwen3.5-9B-Q4_K_M-ollama",
+      "pp": 2048,
+      "tg": 32,
+      "status": "success",
+      "result_file": "results/qwen3.5-9b-all-servers_Qwen3.5-9B-Q4_K_M-ollama_pp2048_tg32.json",
+      "metrics": {
+        "pp_throughput": {
+          "mean": 806.9851314913556,
+          "std": 0.2652511557463226,
+          "n": 10,
+          "median": 807.0718334018661,
+          "sd": 0.38733930038503017,
+          "n_all": 14,
+          "trimmed_low": [
+            806.351205905126,
+            806.422491700918
+          ],
+          "trimmed_high": [
+            807.5248040262154,
+            807.6074467551606
+          ],
+          "kept": [
+            806.5540462652986,
+            806.6394938010773,
+            806.7592325947705,
+            806.7724897135836,
+            807.0265866383514,
+            807.1170801653809,
+            807.1550932039939,
+            807.2606695913671,
+            807.2715806393406,
+            807.2950423003924
+          ],
+          "sample": [
+            807.0265866383514,
+            807.2606695913671,
+            807.5248040262154,
+            806.422491700918,
+            807.2950423003924,
+            806.351205905126,
+            807.1170801653809,
+            806.7592325947705,
+            806.5540462652986,
+            806.7724897135836,
+            807.1550932039939,
+            806.6394938010773,
+            807.6074467551606,
+            807.2715806393406
+          ]
+        },
+        "tg_throughput": {
+          "mean": 64.92193976218124,
+          "std": 0.13691691298543915,
+          "n": 10,
+          "median": 64.91628679963125,
+          "sd": 0.5117822616051038,
+          "n_all": 14,
+          "trimmed_low": [
+            64.50844858242583,
+            64.51970414252635
+          ],
+          "trimmed_high": [
+            65.19904541191354,
+            66.70535095928061
+          ],
+          "kept": [
+            64.75111859387836,
+            64.76368227587145,
+            64.79062386650216,
+            64.82178972672325,
+            64.87943588215406,
+            64.95313771710846,
+            64.98428406291798,
+            64.9995730758235,
+            65.13537838561203,
+            65.14037403522113
+          ],
+          "sample": [
+            64.50844858242583,
+            65.19904541191354,
+            64.79062386650216,
+            65.13537838561203,
+            64.76368227587145,
+            64.75111859387836,
+            64.87943588215406,
+            64.95313771710846,
+            64.9995730758235,
+            64.98428406291798,
+            64.51970414252635,
+            66.70535095928061,
+            65.14037403522113,
+            64.82178972672325
+          ]
+        },
+        "ttfr": {
+          "mean": 2552.8202039189637,
+          "std": 0.8675755055462684,
+          "n": 10,
+          "median": 2552.6783326640725,
+          "sd": 1.227854319499077,
+          "n_all": 14,
+          "trimmed_low": [
+            2550.7345823571086,
+            2550.98716635257
+          ],
+          "trimmed_high": [
+            2554.3153332546353,
+            2554.7315841540694
+          ],
+          "kept": [
+            2551.2479580938816,
+            2552.047375589609,
+            2552.0818326622248,
+            2552.4152908474207,
+            2552.535374648869,
+            2552.821290679276,
+            2553.624457679689,
+            2553.66637557745,
+            2553.717041388154,
+            2554.0450420230627
+          ],
+          "sample": [
+            2552.821290679276,
+            2552.0818326622248,
+            2551.2479580938816,
+            2554.7315841540694,
+            2550.7345823571086,
+            2553.717041388154,
+            2552.535374648869,
+            2553.66637557745,
+            2554.3153332546353,
+            2553.624457679689,
+            2552.4152908474207,
+            2554.0450420230627,
+            2550.98716635257,
+            2552.047375589609
+          ]
+        }
+      }
+    },
+    {
+      "experiment_id": "qwen3.5-9b-all-servers",
+      "server": "lm-studio",
+      "model": "Qwen3.5-9B-Q4_K_M",
+      "label": "Qwen3.5-9B-Q4_K_M-lmstudio",
+      "pp": 2048,
+      "tg": 32,
+      "status": "success",
+      "result_file": "results/qwen3.5-9b-all-servers_Qwen3.5-9B-Q4_K_M-lmstudio_pp2048_tg32.json",
+      "metrics": {
+        "pp_throughput": {
+          "mean": 776.9117154004945,
+          "std": 1.1718464691063395,
+          "n": 10,
+          "median": 776.4935122228032,
+          "sd": 1.8446643466760493,
+          "n_all": 14,
+          "trimmed_low": [
+            774.5672139319308,
+            774.7081181291376
+          ],
+          "trimmed_high": [
+            778.7931650712335,
+            781.4122273030146
+          ],
+          "kept": [
+            774.8283292702853,
+            776.0532069637094,
+            776.1924445077595,
+            776.2609413510901,
+            776.2869040043312,
+            776.7001204412752,
+            777.6276172672099,
+            778.0353872621441,
+            778.4445545228676,
+            778.6876484142725
+          ],
+          "sample": [
+            774.7081181291376,
+            776.2869040043312,
+            774.5672139319308,
+            774.8283292702853,
+            778.6876484142725,
+            776.7001204412752,
+            776.0532069637094,
+            778.7931650712335,
+            778.4445545228676,
+            776.1924445077595,
+            778.0353872621441,
+            781.4122273030146,
+            776.2609413510901,
+            777.6276172672099
+          ]
+        },
+        "tg_throughput": {
+          "mean": 76.96409150255744,
+          "std": 0.6908739375910474,
+          "n": 10,
+          "median": 76.96545971466199,
+          "sd": 1.4728697698567017,
+          "n_all": 14,
+          "trimmed_low": [
+            73.6375275533213,
+            75.45418561849918
+          ],
+          "trimmed_high": [
+            78.89005923244302,
+            79.88686118470581
+          ],
+          "kept": [
+            75.64374964501509,
+            76.33098282527942,
+            76.3607375858897,
+            76.83742939709218,
+            76.9294877568196,
+            77.0014316725044,
+            77.22502245409518,
+            77.54066855787552,
+            77.61458649414044,
+            78.15681863686281
+          ],
+          "sample": [
+            79.88686118470581,
+            76.3607375858897,
+            77.61458649414044,
+            76.9294877568196,
+            75.45418561849918,
+            76.33098282527942,
+            76.83742939709218,
+            75.64374964501509,
+            77.22502245409518,
+            78.15681863686281,
+            77.0014316725044,
+            73.6375275533213,
+            78.89005923244302,
+            77.54066855787552
+          ]
+        },
+        "ttfr": {
+          "mean": 2651.3709124177694,
+          "std": 3.6410429049395274,
+          "n": 10,
+          "median": 2652.82820770517,
+          "sd": 6.096176011664379,
+          "n_all": 14,
+          "trimmed_low": [
+            2636.144833639264,
+            2645.3599594533443
+          ],
+          "trimmed_high": [
+            2658.936083316803,
+            2659.419333562255
+          ],
+          "kept": [
+            2646.1852909997106,
+            2646.2859166786075,
+            2647.575625218451,
+            2648.96266721189,
+            2652.1229995414615,
+            2653.5334158688784,
+            2653.622083365917,
+            2653.856041841209,
+            2654.3317502364516,
+            2657.2333332151175
+          ],
+          "sample": [
+            2658.936083316803,
+            2653.5334158688784,
+            2659.419333562255,
+            2657.2333332151175,
+            2645.3599594533443,
+            2652.1229995414615,
+            2654.3317502364516,
+            2646.2859166786075,
+            2646.1852909997106,
+            2653.856041841209,
+            2647.575625218451,
+            2636.144833639264,
+            2653.622083365917,
+            2648.96266721189
+          ]
+        }
+      }
+    },
+    {
+      "experiment_id": "qwen3.5-9b-all-servers",
+      "server": "llamafile",
+      "model": "Qwen3.5-9B-Q4_K_M",
+      "label": "Qwen3.5-9B-Q4_K_M-llamafile",
+      "pp": 2048,
+      "tg": 64,
+      "status": "success",
+      "result_file": "results/qwen3.5-9b-all-servers_Qwen3.5-9B-Q4_K_M-llamafile_pp2048_tg64.json",
+      "metrics": {
+        "pp_throughput": {
+          "mean": 807.2109785842729,
+          "std": 1.372915144026844,
+          "n": 10,
+          "median": 807.7209936079507,
+          "sd": 1.9922218469877868,
+          "n_all": 14,
+          "trimmed_low": [
+            802.5629049347607,
+            803.097461984787
+          ],
+          "trimmed_high": [
+            808.0880972077805,
+            808.1448586178376
+          ],
+          "kept": [
+            803.1691746142368,
+            807.1604486920733,
+            807.2341115045081,
+            807.5385743281082,
+            807.7182667477499,
+            807.7237204681517,
+            807.8059033605591,
+            807.83113843577,
+            807.8977515873559,
+            808.0306961042153
+          ],
+          "sample": [
+            807.83113843577,
+            807.8977515873559,
+            808.1448586178376,
+            803.097461984787,
+            802.5629049347607,
+            807.8059033605591,
+            808.0880972077805,
+            808.0306961042153,
+            807.7237204681517,
+            807.7182667477499,
+            803.1691746142368,
+            807.5385743281082,
+            807.1604486920733,
+            807.2341115045081
+          ]
+        },
+        "tg_throughput": {
+          "mean": 66.38542620816486,
+          "std": 0.07290007179753497,
+          "n": 10,
+          "median": 66.36381023042378,
+          "sd": 0.10567419483206437,
+          "n_all": 14,
+          "trimmed_low": [
+            66.21195287942123,
+            66.26154216310564
+          ],
+          "trimmed_high": [
+            66.52602925966197,
+            66.58059336031343
+          ],
+          "kept": [
+            66.28495535400324,
+            66.30156080421413,
+            66.33378107814076,
+            66.33487532139912,
+            66.35355861176375,
+            66.37406184908383,
+            66.43079048860275,
+            66.46011869411468,
+            66.48684434891857,
+            66.49371553140777
+          ],
+          "sample": [
+            66.52602925966197,
+            66.30156080421413,
+            66.37406184908383,
+            66.43079048860275,
+            66.58059336031343,
+            66.33487532139912,
+            66.35355861176375,
+            66.48684434891857,
+            66.49371553140777,
+            66.33378107814076,
+            66.28495535400324,
+            66.21195287942123,
+            66.46011869411468,
+            66.26154216310564
+          ]
+        },
+        "ttfr": {
+          "mean": 2550.3084166906774,
+          "std": 4.8125683860987865,
+          "n": 10,
+          "median": 2548.620874993503,
+          "sd": 6.9365632857329595,
+          "n_all": 14,
+          "trimmed_low": [
+            2546.9552502036095,
+            2547.414124943316
+          ],
+          "trimmed_high": [
+            2564.664291217923,
+            2566.37195777148
+          ],
+          "kept": [
+            2547.5038327276707,
+            2547.593000344932,
+            2547.7739172056317,
+            2548.403083346784,
+            2548.48266672343,
+            2548.759083263576,
+            2549.3260426446795,
+            2550.2872494980693,
+            2550.51991622895,
+            2564.4353749230504
+          ],
+          "sample": [
+            2548.403083346784,
+            2546.9552502036095,
+            2547.414124943316,
+            2564.664291217923,
+            2566.37195777148,
+            2548.48266672343,
+            2547.593000344932,
+            2547.7739172056317,
+            2547.5038327276707,
+            2548.759083263576,
+            2564.4353749230504,
+            2549.3260426446795,
+            2550.51991622895,
+            2550.2872494980693
+          ]
+        }
+      }
+    },
+    {
+      "experiment_id": "qwen3.5-9b-all-servers",
+      "server": "llama-cpp",
+      "model": "Qwen3.5-9B-Q4_K_M",
+      "label": "Qwen3.5-9B-Q4_K_M-llamacpp",
+      "pp": 2048,
+      "tg": 64,
+      "status": "success",
+      "result_file": "results/qwen3.5-9b-all-servers_Qwen3.5-9B-Q4_K_M-llamacpp_pp2048_tg64.json",
+      "metrics": {
+        "pp_throughput": {
+          "mean": 805.6483807286569,
+          "std": 0.12738315036096112,
+          "n": 10,
+          "median": 805.6164588754664,
+          "sd": 1.2308155801514236,
+          "n_all": 14,
+          "trimmed_low": [
+            801.019582835174,
+            805.2386465690241
+          ],
+          "trimmed_high": [
+            806.1021875864674,
+            806.260169274911
+          ],
+          "kept": [
+            805.4724422885643,
+            805.5409752527686,
+            805.582413751146,
+            805.5899555300853,
+            805.5980628062489,
+            805.6348549446839,
+            805.646314239984,
+            805.6619393414009,
+            805.8380143412824,
+            805.9188347904046
+          ],
+          "sample": [
+            805.4724422885643,
+            805.8380143412824,
+            805.6619393414009,
+            806.1021875864674,
+            805.5409752527686,
+            805.5899555300853,
+            805.2386465690241,
+            805.9188347904046,
+            805.582413751146,
+            805.6348549446839,
+            801.019582835174,
+            805.5980628062489,
+            805.646314239984,
+            806.260169274911
+          ]
+        },
+        "tg_throughput": {
+          "mean": 67.12194369613225,
+          "std": 0.09317436097064914,
+          "n": 10,
+          "median": 67.15074436672836,
+          "sd": 0.2321363405219829,
+          "n_all": 14,
+          "trimmed_low": [
+            66.46504140888723,
+            66.59678119855256
+          ],
+          "trimmed_high": [
+            67.23387384927572,
+            67.23612524275573
+          ],
+          "kept": [
+            66.89994635205761,
+            67.04431123628248,
+            67.04747744483979,
+            67.14653647102799,
+            67.14720732026584,
+            67.15428141319089,
+            67.16622582258098,
+            67.17570335834361,
+            67.21505912570618,
+            67.22268841702709
+          ],
+          "sample": [
+            67.21505912570618,
+            67.23612524275573,
+            67.23387384927572,
+            67.22268841702709,
+            66.89994635205761,
+            67.17570335834361,
+            67.16622582258098,
+            67.14653647102799,
+            67.15428141319089,
+            66.59678119855256,
+            67.04431123628248,
+            67.14720732026584,
+            67.04747744483979,
+            66.46504140888723
+          ]
+        },
+        "ttfr": {
+          "mean": 2555.1721919327974,
+          "std": 0.5716266351798007,
+          "n": 10,
+          "median": 2555.357042234391,
+          "sd": 4.2843631459422555,
+          "n_all": 14,
+          "trimmed_low": [
+            2553.3175002783537,
+            2553.4137496724725
+          ],
+          "trimmed_high": [
+            2556.55562505126,
+            2571.265541948378
+          ],
+          "kept": [
+            2553.81774995476,
+            2554.3985832482576,
+            2555.2128329873085,
+            2555.262374691665,
+            2555.298709310591,
+            2555.4153751581907,
+            2555.441084317863,
+            2555.465000681579,
+            2555.596417747438,
+            2555.813791230321
+          ],
+          "sample": [
+            2555.813791230321,
+            2553.4137496724725,
+            2555.2128329873085,
+            2553.81774995476,
+            2555.596417747438,
+            2555.441084317863,
+            2556.55562505126,
+            2554.3985832482576,
+            2555.465000681579,
+            2555.298709310591,
+            2571.265541948378,
+            2555.4153751581907,
+            2555.262374691665,
+            2553.3175002783537
+          ]
+        }
+      }
+    },
+    {
+      "experiment_id": "qwen3.5-9b-all-servers",
+      "server": "ollama",
+      "model": "Qwen3.5-9B-Q4_K_M",
+      "label": "Qwen3.5-9B-Q4_K_M-ollama",
+      "pp": 2048,
+      "tg": 64,
+      "status": "success",
+      "result_file": "results/qwen3.5-9b-all-servers_Qwen3.5-9B-Q4_K_M-ollama_pp2048_tg64.json",
+      "metrics": {
+        "pp_throughput": {
+          "mean": 807.6984250237141,
+          "std": 0.2005290316711843,
+          "n": 10,
+          "median": 807.6628463241574,
+          "sd": 0.3485751977321691,
+          "n_all": 14,
+          "trimmed_low": [
+            807.2679405983664,
+            807.3558782818739
+          ],
+          "trimmed_high": [
+            808.1076246848257,
+            808.6210011121228
+          ],
+          "kept": [
+            807.4545731331175,
+            807.4853040203709,
+            807.5323292961571,
+            807.5762044459173,
+            807.6457827853106,
+            807.6799098630041,
+            807.6889177529825,
+            807.8517102106899,
+            808.0050387717484,
+            808.0644799578424
+          ],
+          "sample": [
+            807.4853040203709,
+            808.1076246848257,
+            807.2679405983664,
+            807.6457827853106,
+            807.8517102106899,
+            807.6889177529825,
+            808.0050387717484,
+            808.0644799578424,
+            807.5762044459173,
+            807.3558782818739,
+            807.5323292961571,
+            808.6210011121228,
+            807.6799098630041,
+            807.4545731331175
+          ]
+        },
+        "tg_throughput": {
+          "mean": 64.93323032475227,
+          "std": 0.11924417333987906,
+          "n": 10,
+          "median": 64.95234752097318,
+          "sd": 0.2609478014426487,
+          "n_all": 14,
+          "trimmed_low": [
+            64.30765049619903,
+            64.3662651422872
+          ],
+          "trimmed_high": [
+            65.17806351075178,
+            65.20052591313086
+          ],
+          "kept": [
+            64.70595086966924,
+            64.77638717518687,
+            64.83568742819756,
+            64.92000363920437,
+            64.92038282419328,
+            64.98431221775307,
+            65.0161005363955,
+            65.05319535338108,
+            65.0601401938699,
+            65.06014300967183
+          ],
+          "sample": [
+            65.05319535338108,
+            65.17806351075178,
+            64.92000363920437,
+            65.0161005363955,
+            65.06014300967183,
+            65.0601401938699,
+            64.70595086966924,
+            64.98431221775307,
+            64.83568742819756,
+            65.20052591313086,
+            64.77638717518687,
+            64.30765049619903,
+            64.3662651422872,
+            64.92038282419328
+          ]
+        },
+        "ttfr": {
+          "mean": 2550.7005876861513,
+          "std": 0.4079490400305176,
+          "n": 10,
+          "median": 2550.7954792119563,
+          "sd": 0.7044847244600554,
+          "n_all": 14,
+          "trimmed_low": [
+            2549.0542501211166,
+            2549.4344169273973
+          ],
+          "trimmed_high": [
+            2551.39712523669,
+            2551.4941243454814
+          ],
+          "kept": [
+            2549.757749773562,
+            2550.2411676570773,
+            2550.567083992064,
+            2550.7546244189143,
+            2550.7830418646336,
+            2550.807916559279,
+            2550.8446246385574,
+            2550.890709273517,
+            2551.1102499440312,
+            2551.2487087398767
+          ],
+          "sample": [
+            2551.39712523669,
+            2549.4344169273973,
+            2550.8446246385574,
+            2550.890709273517,
+            2550.2411676570773,
+            2550.7546244189143,
+            2549.757749773562,
+            2550.807916559279,
+            2551.1102499440312,
+            2550.567083992064,
+            2551.2487087398767,
+            2549.0542501211166,
+            2550.7830418646336,
+            2551.4941243454814
+          ]
+        }
+      }
+    },
+    {
+      "experiment_id": "qwen3.5-9b-all-servers",
+      "server": "lm-studio",
+      "model": "Qwen3.5-9B-Q4_K_M",
+      "label": "Qwen3.5-9B-Q4_K_M-lmstudio",
+      "pp": 2048,
+      "tg": 64,
+      "status": "success",
+      "result_file": "results/qwen3.5-9b-all-servers_Qwen3.5-9B-Q4_K_M-lmstudio_pp2048_tg64.json",
+      "metrics": {
+        "pp_throughput": {
+          "mean": 777.546842406985,
+          "std": 2.3293738703772062,
+          "n": 10,
+          "median": 777.580216476302,
+          "sd": 3.0112332717689125,
+          "n_all": 14,
+          "trimmed_low": [
+            773.7914149398232,
+            774.2626447969849
+          ],
+          "trimmed_high": [
+            782.3651383446255,
+            782.5605564096219
+          ],
+          "kept": [
+            774.4749495501009,
+            774.575040326702,
+            775.6262240984244,
+            775.9295156399508,
+            777.2335487618177,
+            777.9268841907864,
+            778.4772627369258,
+            779.3221209483602,
+            779.8920199254756,
+            782.0108578913065
+          ],
+          "sample": [
+            779.8920199254756,
+            779.3221209483602,
+            777.9268841907864,
+            775.6262240984244,
+            774.2626447969849,
+            778.4772627369258,
+            774.4749495501009,
+            782.0108578913065,
+            775.9295156399508,
+            773.7914149398232,
+            777.2335487618177,
+            774.575040326702,
+            782.5605564096219,
+            782.3651383446255
+          ]
+        },
+        "tg_throughput": {
+          "mean": 70.3639221167059,
+          "std": 0.5251470849529828,
+          "n": 10,
+          "median": 70.35040981429077,
+          "sd": 0.8988787723440009,
+          "n_all": 14,
+          "trimmed_low": [
+            68.47340444934528,
+            68.84935513872452
+          ],
+          "trimmed_high": [
+            71.25888053505413,
+            71.7683351585177
+          ],
+          "kept": [
+            69.41588773803477,
+            69.7377023068172,
+            70.06767373254614,
+            70.19625701601736,
+            70.3120749659417,
+            70.38874466263982,
+            70.50971009162313,
+            70.74765206237812,
+            71.12704088661849,
+            71.13647770444221
+          ],
+          "sample": [
+            70.19625701601736,
+            69.7377023068172,
+            70.38874466263982,
+            70.06767373254614,
+            70.74765206237812,
+            70.3120749659417,
+            71.13647770444221,
+            68.84935513872452,
+            71.25888053505413,
+            71.7683351585177,
+            70.50971009162313,
+            71.12704088661849,
+            68.47340444934528,
+            69.41588773803477
+          ]
+        },
+        "ttfr": {
+          "mean": 2648.7179331481457,
+          "std": 7.900079373172839,
+          "n": 10,
+          "median": 2649.280061479658,
+          "sd": 10.159869776106966,
+          "n_all": 14,
+          "trimmed_low": [
+            2631.792957894504,
+            2632.4498327448964
+          ],
+          "trimmed_high": [
+            2659.2486668378115,
+            2661.595999263227
+          ],
+          "kept": [
+            2633.6415419355035,
+            2640.791374258697,
+            2642.7210830152035,
+            2644.3024585023522,
+            2648.7428322434425,
+            2649.8172907158732,
+            2654.26729246974,
+            2655.304417014122,
+            2658.685749396682,
+            2658.905291929841
+          ],
+          "sample": [
+            2640.791374258697,
+            2642.7210830152035,
+            2648.7428322434425,
+            2655.304417014122,
+            2658.685749396682,
+            2644.3024585023522,
+            2659.2486668378115,
+            2633.6415419355035,
+            2654.26729246974,
+            2661.595999263227,
+            2649.8172907158732,
+            2658.905291929841,
+            2631.792957894504,
+            2632.4498327448964
+          ]
+        }
+      }
+    },
+    {
+      "experiment_id": "qwen3.5-9b-all-servers",
+      "server": "llamafile",
+      "model": "Qwen3.5-9B-Q4_K_M",
+      "label": "Qwen3.5-9B-Q4_K_M-llamafile",
+      "pp": 4096,
+      "tg": 32,
+      "status": "success",
+      "result_file": "results/qwen3.5-9b-all-servers_Qwen3.5-9B-Q4_K_M-llamafile_pp4096_tg32.json",
+      "metrics": {
+        "pp_throughput": {
+          "mean": 812.76289614361,
+          "std": 0.4901624318925425,
+          "n": 10,
+          "median": 812.8611520980701,
+          "sd": 0.9011692860876137,
+          "n_all": 14,
+          "trimmed_low": [
+            810.6434594430103,
+            810.8913037666699
+          ],
+          "trimmed_high": [
+            813.558182592205,
+            813.6178375138572
+          ],
+          "kept": [
+            811.4207576482432,
+            812.554081568153,
+            812.7080430650676,
+            812.7880657648952,
+            812.8274394619572,
+            812.894864734183,
+            813.0120025988818,
+            813.0169057874153,
+            813.1091507925539,
+            813.2976500147486
+          ],
+          "sample": [
+            812.7080430650676,
+            812.894864734183,
+            812.554081568153,
+            813.2976500147486,
+            813.1091507925539,
+            813.0120025988818,
+            813.0169057874153,
+            812.7880657648952,
+            810.6434594430103,
+            810.8913037666699,
+            811.4207576482432,
+            812.8274394619572,
+            813.6178375138572,
+            813.558182592205
+          ]
+        },
+        "tg_throughput": {
+          "mean": 65.34395069430144,
+          "std": 0.14985479559454418,
+          "n": 10,
+          "median": 65.27628272848764,
+          "sd": 0.2203364541200845,
+          "n_all": 14,
+          "trimmed_low": [
+            65.05332109521919,
+            65.1023550770593
+          ],
+          "trimmed_high": [
+            65.70688104812399,
+            65.77457242818402
+          ],
+          "kept": [
+            65.20052546308885,
+            65.20680554053857,
+            65.21970093822995,
+            65.25705008581843,
+            65.26879737932123,
+            65.28376807765407,
+            65.4049661292883,
+            65.42701251769877,
+            65.47215181289016,
+            65.69872899848603
+          ],
+          "sample": [
+            65.42701251769877,
+            65.4049661292883,
+            65.47215181289016,
+            65.69872899848603,
+            65.21970093822995,
+            65.05332109521919,
+            65.20052546308885,
+            65.77457242818402,
+            65.20680554053857,
+            65.1023550770593,
+            65.25705008581843,
+            65.26879737932123,
+            65.70688104812399,
+            65.28376807765407
+          ]
+        },
+        "ttfr": {
+          "mean": 5052.605854347348,
+          "std": 3.5403137383074643,
+          "n": 10,
+          "median": 5051.752250175923,
+          "sd": 6.27971667754591,
+          "n_all": 14,
+          "trimmed_low": [
+            5046.189208514988,
+            5047.788333147764
+          ],
+          "trimmed_high": [
+            5065.62012527138,
+            5067.168625071645
+          ],
+          "kept": [
+            5049.345624633133,
+            5049.405083060265,
+            5050.676458515227,
+            5051.148417405784,
+            5051.178875379264,
+            5052.325624972582,
+            5052.570333704352,
+            5053.067750297487,
+            5054.025041870773,
+            5062.315333634615
+          ],
+          "sample": [
+            5053.067750297487,
+            5050.676458515227,
+            5054.025041870773,
+            5049.405083060265,
+            5049.345624633133,
+            5051.178875379264,
+            5051.148417405784,
+            5052.570333704352,
+            5067.168625071645,
+            5065.62012527138,
+            5062.315333634615,
+            5052.325624972582,
+            5046.189208514988,
+            5047.788333147764
+          ]
+        }
+      }
+    },
+    {
+      "experiment_id": "qwen3.5-9b-all-servers",
+      "server": "llama-cpp",
+      "model": "Qwen3.5-9B-Q4_K_M",
+      "label": "Qwen3.5-9B-Q4_K_M-llamacpp",
+      "pp": 4096,
+      "tg": 32,
+      "status": "success",
+      "result_file": "results/qwen3.5-9b-all-servers_Qwen3.5-9B-Q4_K_M-llamacpp_pp4096_tg32.json",
+      "metrics": {
+        "pp_throughput": {
+          "mean": 811.7863347769241,
+          "std": 0.2633387932962578,
+          "n": 10,
+          "median": 811.9284880938233,
+          "sd": 1.0412137444250609,
+          "n_all": 14,
+          "trimmed_low": [
+            808.8607553341271,
+            809.1607602129707
+          ],
+          "trimmed_high": [
+            812.0679619465444,
+            812.4635902381484
+          ],
+          "kept": [
+            811.1481351278271,
+            811.5669815894898,
+            811.5887805159082,
+            811.7794393712142,
+            811.9269662180938,
+            811.9300099695527,
+            811.9320773291806,
+            811.9674141194366,
+            811.9737632036231,
+            812.0497803249157
+          ],
+          "sample": [
+            811.9674141194366,
+            812.0679619465444,
+            811.9300099695527,
+            809.1607602129707,
+            812.4635902381484,
+            811.9737632036231,
+            811.1481351278271,
+            808.8607553341271,
+            811.7794393712142,
+            811.5887805159082,
+            811.5669815894898,
+            811.9269662180938,
+            812.0497803249157,
+            811.9320773291806
+          ]
+        },
+        "tg_throughput": {
+          "mean": 65.83378382835835,
+          "std": 0.08469705744179336,
+          "n": 10,
+          "median": 65.83994284492454,
+          "sd": 0.15449335041484782,
+          "n_all": 14,
+          "trimmed_low": [
+            65.6043292318305,
+            65.66022949446018
+          ],
+          "trimmed_high": [
+            66.06611021540418,
+            66.1918056254259
+          ],
+          "kept": [
+            65.6936588832942,
+            65.69440712404861,
+            65.81444044662112,
+            65.8170080317441,
+            65.83121769947883,
+            65.84866799037023,
+            65.85931755802743,
+            65.86776628394877,
+            65.94408838179254,
+            65.96726588425774
+          ],
+          "sample": [
+            65.83121769947883,
+            65.6936588832942,
+            65.8170080317441,
+            65.81444044662112,
+            65.86776628394877,
+            66.06611021540418,
+            65.96726588425774,
+            65.84866799037023,
+            65.6043292318305,
+            66.1918056254259,
+            65.69440712404861,
+            65.94408838179254,
+            65.66022949446018,
+            65.85931755802743
+          ]
+        },
+        "ttfr": {
+          "mean": 5058.6583958007395,
+          "std": 1.589908090728934,
+          "n": 10,
+          "median": 5057.895521633327,
+          "sd": 6.94351409285491,
+          "n_all": 14,
+          "trimmed_low": [
+            5054.564833641052,
+            5057.026958093047
+          ],
+          "trimmed_high": [
+            5076.42912492156,
+            5078.311665914953
+          ],
+          "kept": [
+            5057.140165939927,
+            5057.61354137212,
+            5057.653082534671,
+            5057.873166166246,
+            5057.886042632163,
+            5057.905000634491,
+            5058.780124410987,
+            5058.8240418583155,
+            5060.148167423904,
+            5062.760625034571
+          ],
+          "sample": [
+            5057.653082534671,
+            5057.026958093047,
+            5057.886042632163,
+            5076.42912492156,
+            5054.564833641052,
+            5057.61354137212,
+            5062.760625034571,
+            5078.311665914953,
+            5058.8240418583155,
+            5058.780124410987,
+            5060.148167423904,
+            5057.905000634491,
+            5057.140165939927,
+            5057.873166166246
+          ]
+        }
+      }
+    },
+    {
+      "experiment_id": "qwen3.5-9b-all-servers",
+      "server": "ollama",
+      "model": "Qwen3.5-9B-Q4_K_M",
+      "label": "Qwen3.5-9B-Q4_K_M-ollama",
+      "pp": 4096,
+      "tg": 32,
+      "status": "success",
+      "result_file": "results/qwen3.5-9b-all-servers_Qwen3.5-9B-Q4_K_M-ollama_pp4096_tg32.json",
+      "metrics": {
+        "pp_throughput": {
+          "mean": 815.4493585140167,
+          "std": 0.25702208985779473,
+          "n": 10,
+          "median": 815.4212209510196,
+          "sd": 0.3723834862131124,
+          "n_all": 14,
+          "trimmed_low": [
+            814.9775490158132,
+            815.0027328036451
+          ],
+          "trimmed_high": [
+            815.9642837701955,
+            816.2262099459683
+          ],
+          "kept": [
+            815.1096704174164,
+            815.1713998562279,
+            815.2406992137246,
+            815.2532573570676,
+            815.3456054233413,
+            815.4968364786978,
+            815.5317080913927,
+            815.6303796185539,
+            815.8343796464251,
+            815.8796490373193
+          ],
+          "sample": [
+            815.2406992137246,
+            815.1713998562279,
+            815.3456054233413,
+            815.4968364786978,
+            815.8796490373193,
+            815.6303796185539,
+            815.9642837701955,
+            814.9775490158132,
+            816.2262099459683,
+            815.2532573570676,
+            815.0027328036451,
+            815.8343796464251,
+            815.1096704174164,
+            815.5317080913927
+          ]
+        },
+        "tg_throughput": {
+          "mean": 64.06830318404631,
+          "std": 0.11137432567057771,
+          "n": 10,
+          "median": 64.02729923084931,
+          "sd": 0.1572151737247336,
+          "n_all": 14,
+          "trimmed_low": [
+            63.79274637225097,
+            63.95611384273988
+          ],
+          "trimmed_high": [
+            64.32620149079494,
+            64.3294387470988
+          ],
+          "kept": [
+            63.98368623817931,
+            63.98864443087763,
+            63.993146584370926,
+            64.00105705776546,
+            64.0232023833283,
+            64.03139607837032,
+            64.03827419868999,
+            64.05168766602729,
+            64.26321114325819,
+            64.30872605959577
+          ],
+          "sample": [
+            63.993146584370926,
+            64.3294387470988,
+            64.32620149079494,
+            64.26321114325819,
+            64.0232023833283,
+            64.30872605959577,
+            64.05168766602729,
+            64.03827419868999,
+            63.95611384273988,
+            63.79274637225097,
+            63.98368623817931,
+            63.98864443087763,
+            64.03139607837032,
+            64.00105705776546
+          ]
+        },
+        "ttfr": {
+          "mean": 5037.777337431908,
+          "std": 1.5800352627095446,
+          "n": 10,
+          "median": 5037.498687393963,
+          "sd": 2.42860977396645,
+          "n_all": 14,
+          "trimmed_low": [
+            5033.107125200331,
+            5034.721915610135
+          ],
+          "trimmed_high": [
+            5040.65883345902,
+            5042.041542008519
+          ],
+          "kept": [
+            5035.243915393949,
+            5035.523166880012,
+            5036.781958304346,
+            5037.313750013709,
+            5037.391041405499,
+            5037.606333382428,
+            5039.1106670722365,
+            5039.188249967992,
+            5039.616417139769,
+            5039.997874759138
+          ],
+          "sample": [
+            5039.188249967992,
+            5039.616417139769,
+            5037.313750013709,
+            5037.606333382428,
+            5035.243915393949,
+            5036.781958304346,
+            5034.721915610135,
+            5042.041542008519,
+            5033.107125200331,
+            5039.1106670722365,
+            5040.65883345902,
+            5035.523166880012,
+            5039.997874759138,
+            5037.391041405499
+          ]
+        }
+      }
+    },
+    {
+      "experiment_id": "qwen3.5-9b-all-servers",
+      "server": "lm-studio",
+      "model": "Qwen3.5-9B-Q4_K_M",
+      "label": "Qwen3.5-9B-Q4_K_M-lmstudio",
+      "pp": 4096,
+      "tg": 32,
+      "status": "success",
+      "result_file": "results/qwen3.5-9b-all-servers_Qwen3.5-9B-Q4_K_M-lmstudio_pp4096_tg32.json",
+      "metrics": {
+        "pp_throughput": {
+          "mean": 797.0806350374177,
+          "std": 1.0799887041794767,
+          "n": 10,
+          "median": 796.6306744125661,
+          "sd": 1.4622962546813238,
+          "n_all": 14,
+          "trimmed_low": [
+            794.4723159612333,
+            795.5990994622689
+          ],
+          "trimmed_high": [
+            798.8903090499357,
+            799.5304201904152
+          ],
+          "kept": [
+            795.6973046372841,
+            795.8060098890058,
+            796.2304455307101,
+            796.5454320219611,
+            796.5642227683298,
+            796.6971260568025,
+            797.7431536672158,
+            798.26114998157,
+            798.4516144143792,
+            798.8098914069183
+          ],
+          "sample": [
+            795.6973046372841,
+            798.8903090499357,
+            794.4723159612333,
+            796.5642227683298,
+            795.8060098890058,
+            796.2304455307101,
+            796.6971260568025,
+            798.4516144143792,
+            799.5304201904152,
+            795.5990994622689,
+            798.8098914069183,
+            796.5454320219611,
+            797.7431536672158,
+            798.26114998157
+          ]
+        },
+        "tg_throughput": {
+          "mean": 75.4273790588932,
+          "std": 1.261459413891485,
+          "n": 10,
+          "median": 75.72806027688901,
+          "sd": 1.9157638434044448,
+          "n_all": 14,
+          "trimmed_low": [
+            71.60865192576834,
+            73.6522746310084
+          ],
+          "trimmed_high": [
+            78.12556619448051,
+            78.66213476682103
+          ],
+          "kept": [
+            73.6629726339616,
+            73.66534299935927,
+            74.16348503997958,
+            74.64687220804444,
+            75.0801207195355,
+            76.37599983424253,
+            76.44136668230647,
+            76.50774252987355,
+            76.60106258199302,
+            77.12882535963601
+          ],
+          "sample": [
+            76.37599983424253,
+            71.60865192576834,
+            78.66213476682103,
+            76.60106258199302,
+            76.50774252987355,
+            77.12882535963601,
+            75.0801207195355,
+            74.64687220804444,
+            73.6629726339616,
+            76.44136668230647,
+            74.16348503997958,
+            78.12556619448051,
+            73.66534299935927,
+            73.6522746310084
+          ]
+        },
+        "ttfr": {
+          "mean": 5153.727803938091,
+          "std": 7.043936716663254,
+          "n": 10,
+          "median": 5155.810249503702,
+          "sd": 9.486756945133633,
+          "n_all": 14,
+          "trimmed_low": [
+            5137.683667242527,
+            5141.798499971628
+          ],
+          "trimmed_high": [
+            5163.059958256781,
+            5170.379541814327
+          ],
+          "kept": [
+            5142.31591578573,
+            5144.622375257313,
+            5147.102083079517,
+            5149.189291521907,
+            5154.69191595912,
+            5156.928583048284,
+            5158.062375150621,
+            5158.967791125178,
+            5162.422999739647,
+            5162.974708713591
+          ],
+          "sample": [
+            5162.422999739647,
+            5141.798499971628,
+            5170.379541814327,
+            5158.062375150621,
+            5162.974708713591,
+            5158.967791125178,
+            5154.69191595912,
+            5144.622375257313,
+            5137.683667242527,
+            5163.059958256781,
+            5142.31591578573,
+            5156.928583048284,
+            5149.189291521907,
+            5147.102083079517
+          ]
+        }
+      }
+    },
+    {
+      "experiment_id": "qwen3.5-9b-all-servers",
+      "server": "llamafile",
+      "model": "Qwen3.5-9B-Q4_K_M",
+      "label": "Qwen3.5-9B-Q4_K_M-llamafile",
+      "pp": 4096,
+      "tg": 64,
+      "status": "success",
+      "result_file": "results/qwen3.5-9b-all-servers_Qwen3.5-9B-Q4_K_M-llamafile_pp4096_tg64.json",
+      "metrics": {
+        "pp_throughput": {
+          "mean": 813.2502206172699,
+          "std": 0.2887989976133371,
+          "n": 10,
+          "median": 813.3042731779607,
+          "sd": 0.5151975890529358,
+          "n_all": 14,
+          "trimmed_low": [
+            812.0932539766688,
+            812.4149375648184
+          ],
+          "trimmed_high": [
+            813.7110509699212,
+            814.0685357508297
+          ],
+          "kept": [
+            812.6986907793151,
+            812.9243754243146,
+            813.0272065140755,
+            813.1133772246782,
+            813.2118404420371,
+            813.3967059138843,
+            813.4917990565298,
+            813.5010187113112,
+            813.5041355568125,
+            813.6330565497404
+          ],
+          "sample": [
+            814.0685357508297,
+            813.5041355568125,
+            812.9243754243146,
+            813.7110509699212,
+            813.3967059138843,
+            813.6330565497404,
+            813.4917990565298,
+            813.0272065140755,
+            813.2118404420371,
+            813.5010187113112,
+            812.6986907793151,
+            813.1133772246782,
+            812.0932539766688,
+            812.4149375648184
+          ]
+        },
+        "tg_throughput": {
+          "mean": 65.31158113975849,
+          "std": 0.04616691428705728,
+          "n": 10,
+          "median": 65.29984690408304,
+          "sd": 0.07639169717727885,
+          "n_all": 14,
+          "trimmed_low": [
+            65.18642890824292,
+            65.21799894479591
+          ],
+          "trimmed_high": [
+            65.43418439336236,
+            65.45686057097892
+          ],
+          "kept": [
+            65.24223989240286,
+            65.2646732644172,
+            65.27899022187513,
+            65.2811660174873,
+            65.2906151306838,
+            65.30907867748229,
+            65.33898030495894,
+            65.34828802522195,
+            65.3717610755844,
+            65.39001878747106
+          ],
+          "sample": [
+            65.30907867748229,
+            65.27899022187513,
+            65.45686057097892,
+            65.34828802522195,
+            65.33898030495894,
+            65.3717610755844,
+            65.39001878747106,
+            65.2811660174873,
+            65.18642890824292,
+            65.43418439336236,
+            65.24223989240286,
+            65.21799894479591,
+            65.2906151306838,
+            65.2646732644172
+          ]
+        },
+        "ttfr": {
+          "mean": 5049.58205036819,
+          "std": 1.9324909472606158,
+          "n": 10,
+          "median": 5049.3688536807895,
+          "sd": 3.2663909559169872,
+          "n_all": 14,
+          "trimmed_low": [
+            5044.6291249245405,
+            5046.8450002372265
+          ],
+          "trimmed_high": [
+            5054.895333014429,
+            5056.897332891822
+          ],
+          "kept": [
+            5046.918542124331,
+            5047.328708693385,
+            5048.128458671272,
+            5048.205000348389,
+            5048.795082606375,
+            5049.942624755204,
+            5050.554042682052,
+            5051.089250482619,
+            5051.728084683418,
+            5053.130708634853
+          ],
+          "sample": [
+            5044.6291249245405,
+            5048.128458671272,
+            5051.728084683418,
+            5046.8450002372265,
+            5048.795082606375,
+            5047.328708693385,
+            5048.205000348389,
+            5051.089250482619,
+            5049.942624755204,
+            5046.918542124331,
+            5053.130708634853,
+            5050.554042682052,
+            5056.897332891822,
+            5054.895333014429
+          ]
+        }
+      }
+    },
+    {
+      "experiment_id": "qwen3.5-9b-all-servers",
+      "server": "llama-cpp",
+      "model": "Qwen3.5-9B-Q4_K_M",
+      "label": "Qwen3.5-9B-Q4_K_M-llamacpp",
+      "pp": 4096,
+      "tg": 64,
+      "status": "success",
+      "result_file": "results/qwen3.5-9b-all-servers_Qwen3.5-9B-Q4_K_M-llamacpp_pp4096_tg64.json",
+      "metrics": {
+        "pp_throughput": {
+          "mean": 811.6557784909852,
+          "std": 0.2025528447000786,
+          "n": 10,
+          "median": 811.6793953946651,
+          "sd": 0.8670969534217224,
+          "n_all": 14,
+          "trimmed_low": [
+            809.1600561585552,
+            809.6556257010545
+          ],
+          "trimmed_high": [
+            812.208343795442,
+            812.2673649452948
+          ],
+          "kept": [
+            811.1825422323847,
+            811.5606989202047,
+            811.5742657802524,
+            811.599024790706,
+            811.6626637758616,
+            811.6961270134685,
+            811.7295693043149,
+            811.7498028717484,
+            811.7777407849956,
+            812.0253494359147
+          ],
+          "sample": [
+            812.2673649452948,
+            809.1600561585552,
+            811.7777407849956,
+            811.6626637758616,
+            811.5606989202047,
+            812.0253494359147,
+            811.1825422323847,
+            811.6961270134685,
+            811.5742657802524,
+            811.7295693043149,
+            811.7498028717484,
+            811.599024790706,
+            809.6556257010545,
+            812.208343795442
+          ]
+        },
+        "tg_throughput": {
+          "mean": 65.81802264880362,
+          "std": 0.19863988654792755,
+          "n": 10,
+          "median": 65.90578905253406,
+          "sd": 0.34702709082143324,
+          "n_all": 14,
+          "trimmed_low": [
+            64.84115654244154,
+            65.17750440348773
+          ],
+          "trimmed_high": [
+            65.9711883695579,
+            65.97667519254144
+          ],
+          "kept": [
+            65.25421221154842,
+            65.71129741706719,
+            65.82498335486272,
+            65.88040380917067,
+            65.90339608410942,
+            65.90818202095869,
+            65.91014719493967,
+            65.91367847076019,
+            65.93397967880193,
+            65.93994624581732
+          ],
+          "sample": [
+            65.91014719493967,
+            65.82498335486272,
+            65.17750440348773,
+            65.93994624581732,
+            65.25421221154842,
+            65.97667519254144,
+            65.71129741706719,
+            65.91367847076019,
+            64.84115654244154,
+            65.93397967880193,
+            65.90818202095869,
+            65.88040380917067,
+            65.9711883695579,
+            65.90339608410942
+          ]
+        },
+        "ttfr": {
+          "mean": 5059.336562640965,
+          "std": 1.3319462351873135,
+          "n": 10,
+          "median": 5059.059748891741,
+          "sd": 5.890312226508819,
+          "n_all": 14,
+          "trimmed_low": [
+            5055.773708038032,
+            5056.1410412192345
+          ],
+          "trimmed_high": [
+            5073.314875364304,
+            5076.421541161835
+          ],
+          "kept": [
+            5057.280292734504,
+            5058.099208399653,
+            5058.8226253166795,
+            5058.858584612608,
+            5058.996707201004,
+            5059.122790582478,
+            5059.539750218391,
+            5059.936416335404,
+            5060.1753341034055,
+            5062.533916905522
+          ],
+          "sample": [
+            5055.773708038032,
+            5076.421541161835,
+            5058.8226253166795,
+            5059.539750218391,
+            5060.1753341034055,
+            5057.280292734504,
+            5062.533916905522,
+            5058.099208399653,
+            5058.858584612608,
+            5059.122790582478,
+            5058.996707201004,
+            5059.936416335404,
+            5073.314875364304,
+            5056.1410412192345
+          ]
+        }
+      }
+    },
+    {
+      "experiment_id": "qwen3.5-9b-all-servers",
+      "server": "ollama",
+      "model": "Qwen3.5-9B-Q4_K_M",
+      "label": "Qwen3.5-9B-Q4_K_M-ollama",
+      "pp": 4096,
+      "tg": 64,
+      "status": "success",
+      "result_file": "results/qwen3.5-9b-all-servers_Qwen3.5-9B-Q4_K_M-ollama_pp4096_tg64.json",
+      "metrics": {
+        "pp_throughput": {
+          "mean": 815.7502946097953,
+          "std": 0.14348997654793008,
+          "n": 10,
+          "median": 815.762988528287,
+          "sd": 0.40157651361276336,
+          "n_all": 14,
+          "trimmed_low": [
+            814.5648712822062,
+            815.2293357511207
+          ],
+          "trimmed_high": [
+            816.0765806093079,
+            816.3128348787002
+          ],
+          "kept": [
+            815.5425248689415,
+            815.5687673761624,
+            815.6171391075219,
+            815.6505762898049,
+            815.7537942931996,
+            815.7721827633743,
+            815.8454342340763,
+            815.8788697548994,
+            815.8801065383765,
+            815.9935508715959
+          ],
+          "sample": [
+            815.5687673761624,
+            815.6171391075219,
+            815.8788697548994,
+            815.8801065383765,
+            815.8454342340763,
+            815.2293357511207,
+            815.9935508715959,
+            815.7721827633743,
+            815.6505762898049,
+            815.7537942931996,
+            814.5648712822062,
+            816.3128348787002,
+            816.0765806093079,
+            815.5425248689415
+          ]
+        },
+        "tg_throughput": {
+          "mean": 64.06415738330615,
+          "std": 0.16819142812818907,
+          "n": 10,
+          "median": 64.0700088674732,
+          "sd": 0.41927796096225856,
+          "n_all": 14,
+          "trimmed_low": [
+            63.65997628492372,
+            63.67866866670395
+          ],
+          "trimmed_high": [
+            64.35951154339686,
+            65.417580269654
+          ],
+          "kept": [
+            63.73645078028793,
+            63.86807085553775,
+            63.98021413724178,
+            64.03101676651447,
+            64.06185187987592,
+            64.0781658550705,
+            64.14283011122477,
+            64.14813392526369,
+            64.23983691712485,
+            64.35500260491987
+          ],
+          "sample": [
+            64.14813392526369,
+            63.65997628492372,
+            65.417580269654,
+            64.23983691712485,
+            63.98021413724178,
+            64.35500260491987,
+            64.0781658550705,
+            63.86807085553775,
+            63.73645078028793,
+            64.03101676651447,
+            63.67866866670395,
+            64.06185187987592,
+            64.14283011122477,
+            64.35951154339686
+          ]
+        },
+        "ttfr": {
+          "mean": 5036.3076579757035,
+          "std": 0.6782592489172349,
+          "n": 10,
+          "median": 5036.263999529183,
+          "sd": 2.3310968779288532,
+          "n_all": 14,
+          "trimmed_low": [
+            5032.593749463558,
+            5034.0499160811305
+          ],
+          "trimmed_high": [
+            5038.052249699831,
+            5043.387416750193
+          ],
+          "kept": [
+            5035.269166342914,
+            5035.475416108966,
+            5035.787374712527,
+            5035.927332937717,
+            5036.04079131037,
+            5036.487207747996,
+            5036.677749827504,
+            5036.8841253221035,
+            5037.182707339525,
+            5037.344708107412
+          ],
+          "sample": [
+            5037.182707339525,
+            5036.8841253221035,
+            5035.269166342914,
+            5036.487207747996,
+            5035.475416108966,
+            5038.052249699831,
+            5035.787374712527,
+            5035.927332937717,
+            5036.677749827504,
+            5036.04079131037,
+            5043.387416750193,
+            5032.593749463558,
+            5034.0499160811305,
+            5037.344708107412
+          ]
+        }
+      }
+    },
+    {
+      "experiment_id": "qwen3.5-9b-all-servers",
+      "server": "lm-studio",
+      "model": "Qwen3.5-9B-Q4_K_M",
+      "label": "Qwen3.5-9B-Q4_K_M-lmstudio",
+      "pp": 4096,
+      "tg": 64,
+      "status": "success",
+      "result_file": "results/qwen3.5-9b-all-servers_Qwen3.5-9B-Q4_K_M-lmstudio_pp4096_tg64.json",
+      "metrics": {
+        "pp_throughput": {
+          "mean": 798.3316951820722,
+          "std": 0.4367663199119373,
+          "n": 10,
+          "median": 798.3553974439508,
+          "sd": 0.9637637874866997,
+          "n_all": 14,
+          "trimmed_low": [
+            795.9157807153254,
+            796.3598334005904
+          ],
+          "trimmed_high": [
+            799.0049020716353,
+            799.5059868708281
+          ],
+          "kept": [
+            797.6674819016177,
+            797.7730055234877,
+            797.9724665887269,
+            798.0832417598505,
+            798.2710755617111,
+            798.4397193261905,
+            798.4664834838158,
+            798.7647568459098,
+            798.8946828739248,
+            798.9840379554872
+          ],
+          "sample": [
+            797.9724665887269,
+            799.0049020716353,
+            798.0832417598505,
+            797.6674819016177,
+            796.3598334005904,
+            799.5059868708281,
+            797.7730055234877,
+            795.9157807153254,
+            798.8946828739248,
+            798.4664834838158,
+            798.2710755617111,
+            798.9840379554872,
+            798.7647568459098,
+            798.4397193261905
+          ]
+        },
+        "tg_throughput": {
+          "mean": 68.94924361033908,
+          "std": 0.27848659286654454,
+          "n": 10,
+          "median": 68.8847621784243,
+          "sd": 0.5146487907938431,
+          "n_all": 14,
+          "trimmed_low": [
+            68.13857097507709,
+            68.37187271126454
+          ],
+          "trimmed_high": [
+            69.72725984825797,
+            70.11489102825126
+          ],
+          "kept": [
+            68.52141877270371,
+            68.71435136961527,
+            68.71913885599282,
+            68.72160629422568,
+            68.84580016811952,
+            68.92372418872907,
+            69.16656215654214,
+            69.18101529237272,
+            69.34720840619644,
+            69.3516105988934
+          ],
+          "sample": [
+            69.3516105988934,
+            68.71913885599282,
+            69.18101529237272,
+            69.34720840619644,
+            69.72725984825797,
+            68.13857097507709,
+            69.16656215654214,
+            70.11489102825126,
+            68.72160629422568,
+            68.37187271126454,
+            68.71435136961527,
+            68.84580016811952,
+            68.52141877270371,
+            68.92372418872907
+          ]
+        },
+        "ttfr": {
+          "mean": 5145.575950201601,
+          "std": 2.8559338846372357,
+          "n": 10,
+          "median": 5145.901791751385,
+          "sd": 6.304771255327851,
+          "n_all": 14,
+          "trimmed_low": [
+            5137.894916348159,
+            5139.8641243577
+          ],
+          "trimmed_high": [
+            5158.18424988538,
+            5161.060833372176
+          ],
+          "kept": [
+            5141.249874606729,
+            5141.824666410685,
+            5142.660667188466,
+            5144.580917432904,
+            5144.7532922029495,
+            5147.05029129982,
+            5147.092416882515,
+            5147.764500230551,
+            5149.051000364125,
+            5149.731875397265
+          ],
+          "sample": [
+            5147.764500230551,
+            5139.8641243577,
+            5147.05029129982,
+            5149.731875397265,
+            5158.18424988538,
+            5137.894916348159,
+            5149.051000364125,
+            5161.060833372176,
+            5141.824666410685,
+            5144.580917432904,
+            5147.092416882515,
+            5141.249874606729,
+            5142.660667188466,
+            5144.7532922029495
+          ]
+        }
+      }
+    },
+    {
+      "experiment_id": "qwen3.5-9b-all-servers",
+      "server": "llamafile",
+      "model": "Qwen3.5-9B-Q4_K_M",
+      "label": "Qwen3.5-9B-Q4_K_M-llamafile",
+      "pp": 8192,
+      "tg": 32,
+      "status": "success",
+      "result_file": "results/qwen3.5-9b-all-servers_Qwen3.5-9B-Q4_K_M-llamafile_pp8192_tg32.json",
+      "metrics": {
+        "pp_throughput": {
+          "mean": 801.3436281702711,
+          "std": 0.10545385823365108,
+          "n": 10,
+          "median": 801.364928967449,
+          "sd": 0.34390348773149215,
+          "n_all": 14,
+          "trimmed_low": [
+            800.1755342463549,
+            801.0959206508359
+          ],
+          "trimmed_high": [
+            801.5762235882165,
+            801.6834429372187
+          ],
+          "kept": [
+            801.1364562614858,
+            801.2297266099945,
+            801.2663096318107,
+            801.3132687894583,
+            801.3369315871066,
+            801.3929263477913,
+            801.4124790502547,
+            801.4125284011698,
+            801.4149230902663,
+            801.5207319333736
+          ],
+          "sample": [
+            801.4124790502547,
+            801.6834429372187,
+            801.5207319333736,
+            801.4149230902663,
+            801.1364562614858,
+            801.2663096318107,
+            801.3929263477913,
+            801.5762235882165,
+            801.4125284011698,
+            800.1755342463549,
+            801.0959206508359,
+            801.3369315871066,
+            801.2297266099945,
+            801.3132687894583
+          ]
+        },
+        "tg_throughput": {
+          "mean": 64.08376306893251,
+          "std": 0.13949138071800438,
+          "n": 10,
+          "median": 64.08854741945896,
+          "sd": 0.18635454859573167,
+          "n_all": 14,
+          "trimmed_low": [
+            63.858615728550966,
+            63.86985937811167
+          ],
+          "trimmed_high": [
+            64.35489015375454,
+            64.43601983329513
+          ],
+          "kept": [
+            63.90845006634578,
+            63.91028379185325,
+            63.95073176399958,
+            63.97979058001146,
+            64.03679162043,
+            64.14030321848794,
+            64.1404525214414,
+            64.19123183590295,
+            64.28046198418787,
+            64.29913330666494
+          ],
+          "sample": [
+            63.91028379185325,
+            64.03679162043,
+            63.95073176399958,
+            64.28046198418787,
+            64.19123183590295,
+            64.1404525214414,
+            64.14030321848794,
+            64.43601983329513,
+            63.90845006634578,
+            63.86985937811167,
+            64.29913330666494,
+            63.97979058001146,
+            63.858615728550966,
+            64.35489015375454
+          ]
+        },
+        "ttfr": {
+          "mean": 10235.894166771322,
+          "std": 1.5843849406222532,
+          "n": 10,
+          "median": 10235.871499869972,
+          "sd": 4.773588472516714,
+          "n_all": 14,
+          "trimmed_low": [
+            10231.80504143238,
+            10233.173542656004
+          ],
+          "trimmed_high": [
+            10239.308416843414,
+            10252.33474932611
+          ],
+          "kept": [
+            10233.881957828999,
+            10233.985208906233,
+            10234.016416594386,
+            10235.263583250344,
+            10235.513917170465,
+            10236.22908256948,
+            10236.531333997846,
+            10237.131209112704,
+            10237.598584033549,
+            10238.79037424922
+          ],
+          "sample": [
+            10234.016416594386,
+            10231.80504143238,
+            10233.881957828999,
+            10233.985208906233,
+            10238.79037424922,
+            10237.131209112704,
+            10235.513917170465,
+            10233.173542656004,
+            10235.263583250344,
+            10252.33474932611,
+            10239.308416843414,
+            10236.22908256948,
+            10237.598584033549,
+            10236.531333997846
+          ]
+        }
+      }
+    },
+    {
+      "experiment_id": "qwen3.5-9b-all-servers",
+      "server": "llama-cpp",
+      "model": "Qwen3.5-9B-Q4_K_M",
+      "label": "Qwen3.5-9B-Q4_K_M-llamacpp",
+      "pp": 8192,
+      "tg": 32,
+      "status": "success",
+      "result_file": "results/qwen3.5-9b-all-servers_Qwen3.5-9B-Q4_K_M-llamacpp_pp8192_tg32.json",
+      "metrics": {
+        "pp_throughput": {
+          "mean": 800.6975271859512,
+          "std": 0.1455576602723414,
+          "n": 10,
+          "median": 800.6987045909058,
+          "sd": 0.3888553696964136,
+          "n_all": 14,
+          "trimmed_low": [
+            799.569631515549,
+            800.3597405490314
+          ],
+          "trimmed_high": [
+            801.0457022559074,
+            801.3406807918354
+          ],
+          "kept": [
+            800.4554196323079,
+            800.5440062514923,
+            800.5523147492978,
+            800.6146505748751,
+            800.6885120532353,
+            800.7088971285763,
+            800.7990122762759,
+            800.8437272087035,
+            800.8805779999325,
+            800.8881539848165
+          ],
+          "sample": [
+            800.3597405490314,
+            800.4554196323079,
+            800.5523147492978,
+            801.3406807918354,
+            799.569631515549,
+            800.7990122762759,
+            800.5440062514923,
+            801.0457022559074,
+            800.8437272087035,
+            800.8881539848165,
+            800.6885120532353,
+            800.6146505748751,
+            800.7088971285763,
+            800.8805779999325
+          ]
+        },
+        "tg_throughput": {
+          "mean": 64.53144250276954,
+          "std": 0.09248273417649529,
+          "n": 10,
+          "median": 64.54936834707024,
+          "sd": 0.13566623113009113,
+          "n_all": 14,
+          "trimmed_low": [
+            64.28859923504207,
+            64.35456740146137
+          ],
+          "trimmed_high": [
+            64.70140771333502,
+            64.76171470539444
+          ],
+          "kept": [
+            64.40188987584095,
+            64.42792890036839,
+            64.44303544067618,
+            64.45263773541345,
+            64.53811167259063,
+            64.56062502154987,
+            64.57019525568549,
+            64.58703922400638,
+            64.63449674520439,
+            64.69846515635963
+          ],
+          "sample": [
+            64.57019525568549,
+            64.69846515635963,
+            64.42792890036839,
+            64.40188987584095,
+            64.44303544067618,
+            64.58703922400638,
+            64.70140771333502,
+            64.28859923504207,
+            64.45263773541345,
+            64.76171470539444,
+            64.35456740146137,
+            64.53811167259063,
+            64.63449674520439,
+            64.56062502154987
+          ]
+        },
+        "ttfr": {
+          "mean": 10244.24764988944,
+          "std": 2.0438121666599876,
+          "n": 10,
+          "median": 10244.359562639147,
+          "sd": 5.235670987085975,
+          "n_all": 14,
+          "trimmed_low": [
+            10236.153166741133,
+            10239.922249689698
+          ],
+          "trimmed_high": [
+            10247.472916729748,
+            10260.075165890157
+          ],
+          "kept": [
+            10240.784708410501,
+            10241.9364573434,
+            10242.504583671689,
+            10243.076458573341,
+            10244.229166768491,
+            10244.489958509803,
+            10245.434999465942,
+            10246.232707984746,
+            10246.33904080838,
+            10247.4484173581
+          ],
+          "sample": [
+            10247.4484173581,
+            10247.472916729748,
+            10246.232707984746,
+            10236.153166741133,
+            10260.075165890157,
+            10243.076458573341,
+            10246.33904080838,
+            10239.922249689698,
+            10242.504583671689,
+            10241.9364573434,
+            10244.489958509803,
+            10245.434999465942,
+            10244.229166768491,
+            10240.784708410501
+          ]
+        }
+      }
+    },
+    {
+      "experiment_id": "qwen3.5-9b-all-servers",
+      "server": "ollama",
+      "model": "Qwen3.5-9B-Q4_K_M",
+      "label": "Qwen3.5-9B-Q4_K_M-ollama",
+      "pp": 8192,
+      "tg": 32,
+      "status": "success",
+      "result_file": "results/qwen3.5-9b-all-servers_Qwen3.5-9B-Q4_K_M-ollama_pp8192_tg32.json",
+      "metrics": {
+        "pp_throughput": {
+          "mean": 805.0915673871552,
+          "std": 0.09618705130970963,
+          "n": 10,
+          "median": 805.0988232163015,
+          "sd": 0.19674553962414837,
+          "n_all": 14,
+          "trimmed_low": [
+            804.7013536502665,
+            804.7586388895545
+          ],
+          "trimmed_high": [
+            805.2798113896972,
+            805.4818914113816
+          ],
+          "kept": [
+            804.9289340798493,
+            804.9499701687738,
+            805.0492695586178,
+            805.0682113297153,
+            805.0710367645453,
+            805.1266096680578,
+            805.127722801623,
+            805.1348576877481,
+            805.2096951493584,
+            805.2493666632637
+          ],
+          "sample": [
+            805.0710367645453,
+            805.0492695586178,
+            804.7013536502665,
+            805.1348576877481,
+            805.4818914113816,
+            805.2798113896972,
+            805.2493666632637,
+            804.9289340798493,
+            805.1266096680578,
+            805.0682113297153,
+            804.9499701687738,
+            805.2096951493584,
+            805.127722801623,
+            804.7586388895545
+          ]
+        },
+        "tg_throughput": {
+          "mean": 62.53238224791001,
+          "std": 0.15687108680092493,
+          "n": 10,
+          "median": 62.493559699593064,
+          "sd": 0.2578208313017506,
+          "n_all": 14,
+          "trimmed_low": [
+            62.00837626208231,
+            62.22444352379576
+          ],
+          "trimmed_high": [
+            62.88757959593885,
+            62.96720247758696
+          ],
+          "kept": [
+            62.339725555613164,
+            62.35914179446484,
+            62.390695690292986,
+            62.45934162424167,
+            62.461014369117876,
+            62.52610503006826,
+            62.586398009050626,
+            62.66768772747833,
+            62.67403323439047,
+            62.85967944438187
+          ],
+          "sample": [
+            62.461014369117876,
+            62.67403323439047,
+            62.586398009050626,
+            62.85967944438187,
+            62.00837626208231,
+            62.339725555613164,
+            62.88757959593885,
+            62.35914179446484,
+            62.52610503006826,
+            62.66768772747833,
+            62.390695690292986,
+            62.45934162424167,
+            62.96720247758696,
+            62.22444352379576
+          ]
+        },
+        "ttfr": {
+          "mean": 10190.327258594334,
+          "std": 1.3610271945448422,
+          "n": 10,
+          "median": 10190.111104864627,
+          "sd": 2.5384576350140886,
+          "n_all": 14,
+          "trimmed_low": [
+            10185.266125015914,
+            10187.821417115629
+          ],
+          "trimmed_high": [
+            10194.41754091531,
+            10195.14308217913
+          ],
+          "kept": [
+            10188.20650037378,
+            10188.708333298564,
+            10189.256333746016,
+            10189.74541593343,
+            10189.759500324726,
+            10190.462709404528,
+            10190.897167660296,
+            10191.9803339988,
+            10191.994999535382,
+            10192.261291667819
+          ],
+          "sample": [
+            10190.462709404528,
+            10191.9803339988,
+            10195.14308217913,
+            10190.897167660296,
+            10185.266125015914,
+            10187.821417115629,
+            10188.20650037378,
+            10192.261291667819,
+            10189.759500324726,
+            10189.256333746016,
+            10191.994999535382,
+            10188.708333298564,
+            10189.74541593343,
+            10194.41754091531
+          ]
+        }
+      }
+    },
+    {
+      "experiment_id": "qwen3.5-9b-all-servers",
+      "server": "lm-studio",
+      "model": "Qwen3.5-9B-Q4_K_M",
+      "label": "Qwen3.5-9B-Q4_K_M-lmstudio",
+      "pp": 8192,
+      "tg": 32,
+      "status": "success",
+      "result_file": "results/qwen3.5-9b-all-servers_Qwen3.5-9B-Q4_K_M-lmstudio_pp8192_tg32.json",
+      "metrics": {
+        "pp_throughput": {
+          "mean": 793.0534027785276,
+          "std": 0.5268262005334401,
+          "n": 10,
+          "median": 793.1162738349926,
+          "sd": 0.7295348625158009,
+          "n_all": 14,
+          "trimmed_low": [
+            792.0109561705275,
+            792.0927525837294
+          ],
+          "trimmed_high": [
+            793.9417323989381,
+            794.4251465030615
+          ],
+          "kept": [
+            792.1824817439443,
+            792.4146591703737,
+            792.5443008944764,
+            792.787562017163,
+            793.0118296004025,
+            793.2207180695829,
+            793.4002541465285,
+            793.572532310736,
+            793.5907426274291,
+            793.8089472046388
+          ],
+          "sample": [
+            792.0109561705275,
+            793.5907426274291,
+            793.572532310736,
+            793.0118296004025,
+            794.4251465030615,
+            792.787562017163,
+            792.5443008944764,
+            793.8089472046388,
+            793.9417323989381,
+            792.0927525837294,
+            793.4002541465285,
+            792.1824817439443,
+            792.4146591703737,
+            793.2207180695829
+          ]
+        },
+        "tg_throughput": {
+          "mean": 73.22130240604193,
+          "std": 1.0816706545739119,
+          "n": 10,
+          "median": 73.62948686775624,
+          "sd": 1.705419852799916,
+          "n_all": 14,
+          "trimmed_low": [
+            71.09830833918673,
+            71.10564021399787
+          ],
+          "trimmed_high": [
+            76.36882656938701,
+            76.45489327583944
+          ],
+          "kept": [
+            71.39435476632009,
+            72.02595950355045,
+            72.34026992255609,
+            72.3554660646449,
+            73.62048421024247,
+            73.63848952527,
+            73.65705064764306,
+            73.98143520082971,
+            74.09661867505095,
+            75.10289554431166
+          ],
+          "sample": [
+            74.09661867505095,
+            72.34026992255609,
+            71.39435476632009,
+            73.62048421024247,
+            71.09830833918673,
+            73.98143520082971,
+            76.36882656938701,
+            71.10564021399787,
+            72.3554660646449,
+            75.10289554431166,
+            73.65705064764306,
+            76.45489327583944,
+            73.63848952527,
+            72.02595950355045
+          ]
+        },
+        "ttfr": {
+          "mean": 10344.781307969242,
+          "std": 6.699023125655935,
+          "n": 10,
+          "median": 10343.83110376075,
+          "sd": 9.426852387012811,
+          "n_all": 14,
+          "trimmed_low": [
+            10326.79258286953,
+            10333.078917115927
+          ],
+          "trimmed_high": [
+            10357.193917036057,
+            10358.263333328068
+          ],
+          "kept": [
+            10336.066749878228,
+            10337.647999636829,
+            10337.88516651839,
+            10340.129415504634,
+            10342.469249852002,
+            10345.192957669497,
+            10348.118792288005,
+            10351.294292137027,
+            10352.987415157259,
+            10356.021041050553
+          ],
+          "sample": [
+            10358.263333328068,
+            10337.647999636829,
+            10337.88516651839,
+            10345.192957669497,
+            10326.79258286953,
+            10348.118792288005,
+            10351.294292137027,
+            10336.066749878228,
+            10333.078917115927,
+            10357.193917036057,
+            10340.129415504634,
+            10356.021041050553,
+            10352.987415157259,
+            10342.469249852002
+          ]
+        }
+      }
+    },
+    {
+      "experiment_id": "qwen3.5-9b-all-servers",
+      "server": "llamafile",
+      "model": "Qwen3.5-9B-Q4_K_M",
+      "label": "Qwen3.5-9B-Q4_K_M-llamafile",
+      "pp": 8192,
+      "tg": 64,
+      "status": "success",
+      "result_file": "results/qwen3.5-9b-all-servers_Qwen3.5-9B-Q4_K_M-llamafile_pp8192_tg64.json",
+      "metrics": {
+        "pp_throughput": {
+          "mean": 801.0511141130111,
+          "std": 0.17436390973917362,
+          "n": 10,
+          "median": 801.026783432012,
+          "sd": 0.44897256267830965,
+          "n_all": 14,
+          "trimmed_low": [
+            799.8849583280428,
+            800.0973474358047
+          ],
+          "trimmed_high": [
+            801.4748088926418,
+            801.4797266925647
+          ],
+          "kept": [
+            800.7749633208294,
+            800.8759826035093,
+            800.9500422957253,
+            800.958078988919,
+            800.993444336617,
+            801.0601225274071,
+            801.0817588631414,
+            801.1391526402024,
+            801.3213943367796,
+            801.3562012169797
+          ],
+          "sample": [
+            801.3562012169797,
+            801.4748088926418,
+            801.4797266925647,
+            800.0973474358047,
+            801.3213943367796,
+            800.9500422957253,
+            800.958078988919,
+            801.0601225274071,
+            800.8759826035093,
+            801.1391526402024,
+            800.7749633208294,
+            801.0817588631414,
+            799.8849583280428,
+            800.993444336617
+          ]
+        },
+        "tg_throughput": {
+          "mean": 64.05057882481421,
+          "std": 0.09017725017152806,
+          "n": 10,
+          "median": 64.0479063209306,
+          "sd": 0.1252537587797011,
+          "n_all": 14,
+          "trimmed_low": [
+            63.905546917874815,
+            63.93130330270619
+          ],
+          "trimmed_high": [
+            64.26227162381309,
+            64.29743920695881
+          ],
+          "kept": [
+            63.93861082901888,
+            63.963671412178975,
+            63.96848009491891,
+            63.97030691850035,
+            64.03919063112833,
+            64.05662201073284,
+            64.06613252492946,
+            64.12036164935658,
+            64.15110604063193,
+            64.23130613674576
+          ],
+          "sample": [
+            64.23130613674576,
+            63.905546917874815,
+            64.26227162381309,
+            63.963671412178975,
+            64.03919063112833,
+            64.05662201073284,
+            63.93861082901888,
+            64.12036164935658,
+            63.93130330270619,
+            63.96848009491891,
+            64.06613252492946,
+            63.97030691850035,
+            64.15110604063193,
+            64.29743920695881
+          ]
+        },
+        "ttfr": {
+          "mean": 10239.861462451518,
+          "std": 2.228535706640515,
+          "n": 10,
+          "median": 10240.171999670565,
+          "sd": 6.1330587811930455,
+          "n_all": 14,
+          "trimmed_low": [
+            10234.385374933481,
+            10234.44816749543
+          ],
+          "trimmed_high": [
+            10253.316417336464,
+            10256.038708612323
+          ],
+          "kept": [
+            10235.962834209204,
+            10236.40741687268,
+            10238.735791295767,
+            10239.469290710986,
+            10239.74583297968,
+            10240.598166361451,
+            10241.05029180646,
+            10241.153041832149,
+            10242.10000038147,
+            10243.391958065331
+          ],
+          "sample": [
+            10235.962834209204,
+            10234.44816749543,
+            10234.385374933481,
+            10253.316417336464,
+            10236.40741687268,
+            10241.153041832149,
+            10241.05029180646,
+            10239.74583297968,
+            10242.10000038147,
+            10238.735791295767,
+            10243.391958065331,
+            10239.469290710986,
+            10256.038708612323,
+            10240.598166361451
+          ]
+        }
+      }
+    },
+    {
+      "experiment_id": "qwen3.5-9b-all-servers",
+      "server": "llama-cpp",
+      "model": "Qwen3.5-9B-Q4_K_M",
+      "label": "Qwen3.5-9B-Q4_K_M-llamacpp",
+      "pp": 8192,
+      "tg": 64,
+      "status": "success",
+      "result_file": "results/qwen3.5-9b-all-servers_Qwen3.5-9B-Q4_K_M-llamacpp_pp8192_tg64.json",
+      "metrics": {
+        "pp_throughput": {
+          "mean": 800.7271826186942,
+          "std": 0.13396648833503783,
+          "n": 10,
+          "median": 800.7084545908509,
+          "sd": 0.32863820963768436,
+          "n_all": 14,
+          "trimmed_low": [
+            799.8102477252818,
+            800.114970559619
+          ],
+          "trimmed_high": [
+            800.955136419476,
+            801.0856719172136
+          ],
+          "kept": [
+            800.4782308005626,
+            800.6159465435471,
+            800.6520469181202,
+            800.6594522866615,
+            800.689508631816,
+            800.7274005498858,
+            800.7415532089113,
+            800.8828034674864,
+            800.8982781685287,
+            800.9266056114222
+          ],
+          "sample": [
+            800.7415532089113,
+            800.9266056114222,
+            800.8828034674864,
+            800.6520469181202,
+            800.7274005498858,
+            800.114970559619,
+            800.6594522866615,
+            800.689508631816,
+            800.955136419476,
+            801.0856719172136,
+            800.6159465435471,
+            800.4782308005626,
+            799.8102477252818,
+            800.8982781685287
+          ]
+        },
+        "tg_throughput": {
+          "mean": 64.65188572262186,
+          "std": 0.06701176700263874,
+          "n": 10,
+          "median": 64.68399115328984,
+          "sd": 0.19148932078382241,
+          "n_all": 14,
+          "trimmed_low": [
+            63.98507420985752,
+            64.49814961877254
+          ],
+          "trimmed_high": [
+            64.73328498997527,
+            64.7907654045775
+          ],
+          "kept": [
+            64.53547924141576,
+            64.542167844982,
+            64.59116294497613,
+            64.64650893793859,
+            64.68349030735241,
+            64.68449199922725,
+            64.69022626947456,
+            64.70902194442999,
+            64.71486575143336,
+            64.72144198498843
+          ],
+          "sample": [
+            64.73328498997527,
+            64.59116294497613,
+            64.70902194442999,
+            64.72144198498843,
+            64.53547924141576,
+            64.542167844982,
+            63.98507420985752,
+            64.64650893793859,
+            64.71486575143336,
+            64.68449199922725,
+            64.69022626947456,
+            64.68349030735241,
+            64.49814961877254,
+            64.7907654045775
+          ]
+        },
+        "ttfr": {
+          "mean": 10243.936075177044,
+          "std": 1.7137580032303523,
+          "n": 10,
+          "median": 10244.175375439227,
+          "sd": 4.531978114039196,
+          "n_all": 14,
+          "trimmed_low": [
+            10239.35191705823,
+            10239.772042259574
+          ],
+          "trimmed_high": [
+            10251.773416996002,
+            10256.929292343557
+          ],
+          "kept": [
+            10241.385333240032,
+            10241.747540421784,
+            10241.94541759789,
+            10243.75195801258,
+            10243.933000601828,
+            10244.417750276625,
+            10244.802292436361,
+            10244.897041469812,
+            10245.358957909048,
+            10247.121459804475
+          ],
+          "sample": [
+            10243.75195801258,
+            10241.385333240032,
+            10241.94541759789,
+            10244.897041469812,
+            10243.933000601828,
+            10251.773416996002,
+            10244.802292436361,
+            10244.417750276625,
+            10239.772042259574,
+            10239.35191705823,
+            10245.358957909048,
+            10247.121459804475,
+            10256.929292343557,
+            10241.747540421784
+          ]
+        }
+      }
+    },
+    {
+      "experiment_id": "qwen3.5-9b-all-servers",
+      "server": "ollama",
+      "model": "Qwen3.5-9B-Q4_K_M",
+      "label": "Qwen3.5-9B-Q4_K_M-ollama",
+      "pp": 8192,
+      "tg": 64,
+      "status": "success",
+      "result_file": "results/qwen3.5-9b-all-servers_Qwen3.5-9B-Q4_K_M-ollama_pp8192_tg64.json",
+      "metrics": {
+        "pp_throughput": {
+          "mean": 805.3244459070723,
+          "std": 0.09381455522143765,
+          "n": 10,
+          "median": 805.3410599127053,
+          "sd": 0.21949572837240622,
+          "n_all": 14,
+          "trimmed_low": [
+            804.767434323458,
+            805.1304472181489
+          ],
+          "trimmed_high": [
+            805.6049722307092,
+            805.7247519235968
+          ],
+          "kept": [
+            805.173717985706,
+            805.179951655275,
+            805.2720526192649,
+            805.2738681116766,
+            805.3035090841773,
+            805.3786107412334,
+            805.393728916375,
+            805.3968495048391,
+            805.4164667223632,
+            805.4557037298132
+          ],
+          "sample": [
+            805.173717985706,
+            805.3035090841773,
+            805.2738681116766,
+            805.4164667223632,
+            805.3968495048391,
+            805.2720526192649,
+            804.767434323458,
+            805.3786107412334,
+            805.393728916375,
+            805.179951655275,
+            805.6049722307092,
+            805.1304472181489,
+            805.7247519235968,
+            805.4557037298132
+          ]
+        },
+        "tg_throughput": {
+          "mean": 62.61524225099108,
+          "std": 0.07682951217464246,
+          "n": 10,
+          "median": 62.58353266530605,
+          "sd": 0.33362423109112044,
+          "n_all": 14,
+          "trimmed_low": [
+            62.13027712280571,
+            62.46606613603262
+          ],
+          "trimmed_high": [
+            62.750595181004236,
+            63.733680952056375
+          ],
+          "kept": [
+            62.481187473522276,
+            62.565112549137034,
+            62.56561216883598,
+            62.57676981664812,
+            62.58319334144557,
+            62.58387198916653,
+            62.64502198558471,
+            62.70488732544527,
+            62.71159978650346,
+            62.73516607362183
+          ],
+          "sample": [
+            62.750595181004236,
+            62.46606613603262,
+            63.733680952056375,
+            62.64502198558471,
+            62.13027712280571,
+            62.70488732544527,
+            62.57676981664812,
+            62.58319334144557,
+            62.56561216883598,
+            62.565112549137034,
+            62.73516607362183,
+            62.58387198916653,
+            62.71159978650346,
+            62.481187473522276
+          ]
+        },
+        "ttfr": {
+          "mean": 10187.35434571281,
+          "std": 1.3950633877201613,
+          "n": 10,
+          "median": 10186.667395289987,
+          "sd": 2.8902781754881204,
+          "n_all": 14,
+          "trimmed_low": [
+            10182.239416986704,
+            10183.752957731485
+          ],
+          "trimmed_high": [
+            10190.448000095785,
+            10194.348707795143
+          ],
+          "kept": [
+            10185.639750212431,
+            10186.135832220316,
+            10186.383875086904,
+            10186.423333361745,
+            10186.614499427378,
+            10186.720291152596,
+            10187.564250081778,
+            10189.12716768682,
+            10189.180958084762,
+            10189.753499813378
+          ],
+          "sample": [
+            10190.448000095785,
+            10187.564250081778,
+            10189.180958084762,
+            10186.135832220316,
+            10186.383875086904,
+            10186.720291152596,
+            10194.348707795143,
+            10186.614499427378,
+            10186.423333361745,
+            10189.12716768682,
+            10183.752957731485,
+            10189.753499813378,
+            10182.239416986704,
+            10185.639750212431
+          ]
+        }
+      }
+    },
+    {
+      "experiment_id": "qwen3.5-9b-all-servers",
+      "server": "lm-studio",
+      "model": "Qwen3.5-9B-Q4_K_M",
+      "label": "Qwen3.5-9B-Q4_K_M-lmstudio",
+      "pp": 8192,
+      "tg": 64,
+      "status": "success",
+      "result_file": "results/qwen3.5-9b-all-servers_Qwen3.5-9B-Q4_K_M-lmstudio_pp8192_tg64.json",
+      "metrics": {
+        "pp_throughput": {
+          "mean": 792.8760652513665,
+          "std": 0.6462737175570524,
+          "n": 10,
+          "median": 792.8235552432145,
+          "sd": 0.762219085845469,
+          "n_all": 14,
+          "trimmed_low": [
+            791.7353875211965,
+            791.9488293006799
+          ],
+          "trimmed_high": [
+            793.7896076032839,
+            793.857723434557
+          ],
+          "kept": [
+            791.977288379204,
+            792.0415915499075,
+            792.1621309941821,
+            792.6153509924663,
+            792.7705518586057,
+            792.8765586278233,
+            793.3652501716596,
+            793.4784782891654,
+            793.7309384962894,
+            793.7425131543615
+          ],
+          "sample": [
+            792.8765586278233,
+            793.4784782891654,
+            793.857723434557,
+            792.1621309941821,
+            791.977288379204,
+            793.7896076032839,
+            791.7353875211965,
+            792.7705518586057,
+            793.7425131543615,
+            793.7309384962894,
+            792.6153509924663,
+            791.9488293006799,
+            793.3652501716596,
+            792.0415915499075
+          ]
+        },
+        "tg_throughput": {
+          "mean": 67.68436709946431,
+          "std": 0.7519124072466812,
+          "n": 10,
+          "median": 67.48802315566002,
+          "sd": 0.9276833606404764,
+          "n_all": 14,
+          "trimmed_low": [
+            66.29728434670527,
+            66.79187493000111
+          ],
+          "trimmed_high": [
+            68.9677790268105,
+            69.11275225542079
+          ],
+          "kept": [
+            66.80013438881699,
+            66.93170805287728,
+            66.9333523992121,
+            66.98928739097322,
+            67.3164754230308,
+            67.65957088828922,
+            68.38804314684728,
+            68.39899173590105,
+            68.71250884260806,
+            68.71359872608718
+          ],
+          "sample": [
+            66.98928739097322,
+            66.9333523992121,
+            66.79187493000111,
+            68.38804314684728,
+            69.11275225542079,
+            66.93170805287728,
+            68.71359872608718,
+            68.39899173590105,
+            66.29728434670527,
+            67.3164754230308,
+            67.65957088828922,
+            68.9677790268105,
+            66.80013438881699,
+            68.71250884260806
+          ]
+        },
+        "ttfr": {
+          "mean": 10346.671158261597,
+          "std": 8.395864522547761,
+          "n": 10,
+          "median": 10347.49983344227,
+          "sd": 10.061904341127939,
+          "n_all": 14,
+          "trimmed_low": [
+            10334.022833965719,
+            10334.262625314295
+          ],
+          "trimmed_high": [
+            10359.816917218268,
+            10361.718458123505
+          ],
+          "kept": [
+            10334.909417666495,
+            10335.673166438937,
+            10338.960957713425,
+            10340.436208061874,
+            10346.808209083974,
+            10348.191457800567,
+            10350.21729208529,
+            10356.137708760798,
+            10357.66370780766,
+            10357.713457196951
+          ],
+          "sample": [
+            10346.808209083974,
+            10338.960957713425,
+            10334.022833965719,
+            10356.137708760798,
+            10359.816917218268,
+            10334.909417666495,
+            10361.718458123505,
+            10348.191457800567,
+            10334.262625314295,
+            10335.673166438937,
+            10350.21729208529,
+            10357.66370780766,
+            10340.436208061874,
+            10357.713457196951
+          ]
+        }
+      }
+    }
+  ],
+  "summary": {
+    "total_runs": 32,
+    "successful": 32,
+    "failed": 0
+  }
+}

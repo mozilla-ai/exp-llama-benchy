@@ -1,0 +1,19 @@
+host: computeinstance-e00htnyqvz8b7692vz  date: 2026-09-12T17:13Z
+exp-benchy commit: 050146d
+os: Linux 6.11.0-1016-nvidia
+gpu: NVIDIA L40S, 570.195.03, 46068 MiB
+llama-server: version: 0.1.0-dev (build 10441, commit 0177dcc73)
+llamafile: /home/mala/llamafile-42ff11b/llamafile-0.10.6-42ff11b: llamafile v0.10.6 (sha256 779b9d7d3233c223)
+llamafile: /home/mala/llamafiles/llamafile-0.10.5: llamafile v0.10.5 (sha256 417bcc3348cd5162)
+llamafile: /home/mala/llamafiles/llamafile-0.10.5-thin: llamafile v0.10.5 (sha256 55c69c1be9d6ad21)
+llamafile: /home/mala/llamafiles/llamafile-0.10.6-c73be59: llamafile v0.10.6 (sha256 648cd658ea642218)
+llamafile module: /home/mala/llamafile-42ff11b/ggml-cuda.so (sha256 8b4aa57e2688e1ab, 109651584 B, cuda-graphs=4, int-dot=0)
+llamafile module: /home/mala/.llamafile/v/0.10.2/ggml-cuda.so (sha256 2bd6fa94edd72b46, 98185912 B, cuda-graphs=0, int-dot=0)
+llamafile module: /home/mala/.llamafile/v/0.10.4/ggml-cuda.so (sha256 157715547b7231d6, 98534096 B, cuda-graphs=0, int-dot=0)
+llamafile module: /home/mala/.llamafile/v/0.10.6/ggml-cuda.so (sha256 4f8ffca38d825b61, 109585952 B, cuda-graphs=0, int-dot=0)
+llamafile module: /home/mala/.llamafile/v/0.10.6/ggml-vulkan.so (sha256 e29660760e3ed1df, 45613560 B, cuda-graphs=0, int-dot=0)
+llama-server int-dot: 0
+ollama: 0.34.0
+lm studio runtime: llama.cpp-linux-x86_64-nvidia-cuda12-avx2@2.28.2
+ollama -lms blobs: qwen3.5:0.8b-lms=091d8deba394 qwen3.5:9b-lms=cd76ec205963 qwen3.8:27b-lms=e00082f779fa qwen3.8:27b-lms-mtp=e00082f779fa qwen3.8:27b-lms-mtp4=e00082f779fa 
+ollama draft lengths: qwen3.8:27b-lms-mtp=2 qwen3.8:27b-lms-mtp4=4 
